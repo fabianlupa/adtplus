@@ -8,6 +8,9 @@ updates:
     ignore:
       # Bumped by hand after the adt-ls checklist (docs/adtls-upgrade.md).
       - dependency-name: "@arc-mcp/adt-ls"
+      # Follows the Node.js major in package.json "engines", not the latest Node.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
     groups:
       dev-dependencies:
         dependency-type: development

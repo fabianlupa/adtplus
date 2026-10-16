@@ -78,7 +78,8 @@ failures (locks, SSO/session issues). Any model otherwise.
 
 ## `dev/` is development-only
 
-`dev/` (`daemon-env.sh` for parallel daemons, `gate.sh` and `hooks/` for the public-safety gate)
-must stay off the shipped surface: never add it to `tsup.config.ts`, never expose it as an MCP
-tool, daemon command or CLI subcommand. Evals of agent routing live outside the repo, and nothing
-in the repo writes to a system on its own (`docs/decisions/020-evals-outside-the-repo.md`).
+`dev/` (`daemon-env.sh` for parallel daemons, `gate.sh` and `hooks/` for the public-safety gate,
+`logo.py` for the README logo) must stay off the shipped surface: never add it to
+`tsup.config.ts`, never expose it as an MCP tool, daemon command or CLI subcommand. Evals of
+agent routing live outside the repo, and nothing in the repo writes to a system on its own
+(`docs/decisions/020-evals-outside-the-repo.md`).

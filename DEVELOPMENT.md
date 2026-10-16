@@ -43,7 +43,7 @@ Details, and how to run two configs side by side:
 ## `dev/` is development-only
 
 `dev/` holds development scripts: `daemon-env.sh` for parallel daemons, `gate.sh` and `hooks/`
-for the public-safety gate. None of it is shipped
+for the public-safety gate, `logo.py` for the README logo. None of it is shipped
 ([ADR-020](docs/decisions/020-evals-outside-the-repo.md)): it is not in `tsup.config.ts`'s entry
 map and adds no MCP tool, daemon command or CLI subcommand. Evals of how agents use adt+ live
 outside the repo, with the agent instructions they test.
