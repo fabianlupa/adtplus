@@ -25,7 +25,7 @@
   "dependencies": {
     "@abaplint/core": "2.120.54",
     "@arc-mcp/adt-ls": "0.7.0",
-    "@modelcontextprotocol/sdk": "1.30.0",
+    "@modelcontextprotocol/sdk": "1.31.0",
     "ajv": "8.20.0",
     "zod": "3.25.76"
   },
