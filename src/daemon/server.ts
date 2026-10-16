@@ -39,7 +39,7 @@ import { walk } from '../mirror/walk.js';
 import { readActiveIncludes } from '../core/active-source.js';
 import { adtLsInfo, adtLsWarnings } from '../core/adtls-version.js';
 import { installExtraCaCerts } from '../core/cacerts.js';
-import { combineConfigs, type Destination, type LoadedConfig } from '../core/destinations.js';
+import { combineConfigs, systemLanguageVersion, type Destination, type LoadedConfig } from '../core/destinations.js';
 import { lookupPackageChain } from '../core/placement.js';
 import { createCallLog, resolveCallLog, type CallLogTarget } from './calllog.js';
 import { createConfigResolver, staticResolver, type ConfigResolver } from './config.js';
@@ -1421,7 +1421,7 @@ export function createDaemonServer(opts: DaemonServerOptions): DaemonServer {
             root: req.root,
             workspaceFolders: req.workspaceFolders,
             system: ctx.system,
-            languageVersion: ctx.destination.languageVersion,
+            languageVersion: systemLanguageVersion(ctx.destination),
             adtLsVersion: adtLs.version ?? undefined,
             rules: req.rules,
           }),
@@ -1465,7 +1465,7 @@ export function createDaemonServer(opts: DaemonServerOptions): DaemonServer {
             name,
             package: req.package,
             description,
-            languageVersion: ctx.destination.languageVersion,
+            ...(ctx.destination.kind === 'cloud' ? { languageVersion: 'cloudDevelopment' as const } : {}),
             language: logonLanguage(ctx.destination),
           }),
         };
@@ -1518,8 +1518,8 @@ export function createDaemonServer(opts: DaemonServerOptions): DaemonServer {
       // Before the rate limit and the locks: resolving may wait for the approval dialog.
       if (!refusal && 'system' in req) ctx = await systemContext(req.system, projectSetsOf(req));
       // ADR-011: the git remote helper only on systems that opted in, before any SAP call.
-      if (ctx && req.client === 'git' && ctx.destination.mirror?.git?.enabled !== true) {
-        throw new Error(`git remote not enabled for ${ctx.system}; set "mirror": { "git": { "enabled": true } } for it in systems.json`);
+      if (ctx && req.client === 'git' && ctx.destination.allowGitRemote !== true) {
+        throw new Error(`git remote not enabled for ${ctx.system}; set "allowGitRemote": true for it in systems.json`);
       }
       // ADR-009: before the rate limit, so a refused write costs no budget. Push never dispatches this command.
       if (ctx && req.cmd === 'object.update') {

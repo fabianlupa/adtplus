@@ -19,8 +19,11 @@ export interface NewInput extends MirrorLocation {
   package?: string;
   /** Default: the name. */
   description?: string;
-  /** The system's `languageVersion` (systems.json), written into the header. */
-  languageVersion?: string;
+  /**
+   * `cloudDevelopment` on a cloud system, written into the header. Otherwise none: the create
+   * gives the object its package's default, and the read-back after the push writes it.
+   */
+  languageVersion?: 'cloudDevelopment';
   /** The logon language, `EN`: a message class's original language. */
   language?: string;
 }
@@ -194,13 +197,13 @@ export function poolName(entity: string): string {
   return `${entity[0]}BP_${entity.slice(1).replace(/^_/, '')}`;
 }
 
-/** The `.json` file as adt-ls serves a fresh object, with the system's language version when it isn't standard. */
+/** The `.json` file as adt-ls serves a fresh object, with a language version when one is given. */
 function metadata(skeleton: Skeleton, description: string, languageVersion: string | undefined, language: string | undefined): string {
   if (skeleton.logonLanguage) {
     return JSON.stringify({ formatVersion: '1', header: { description, originalLanguage: (language ?? 'en').toLowerCase() }, ...skeleton.fields }, null, 2);
   }
   const header: Record<string, string> = { description, originalLanguage: 'en' };
-  if (languageVersion === 'cloudDevelopment' || languageVersion === 'keyUser') header.abapLanguageVersion = languageVersion;
+  if (languageVersion) header.abapLanguageVersion = languageVersion;
   return JSON.stringify({ formatVersion: '1', header, ...(skeleton.fields ?? {}) }, null, 2);
 }
 

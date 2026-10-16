@@ -90,7 +90,7 @@ describe('trust store', () => {
     await approve(file, hash, store, new Date('2026-09-28T12:00:00Z'));
 
     const read = await readTrustStore(store);
-    expect(read[file]).toEqual({ sha256: hash, approvedAt: '2026-09-28T12:00:00.000Z', merge: 2 });
+    expect(read[file]).toEqual({ sha256: hash, approvedAt: '2026-09-28T12:00:00.000Z' });
     expect(isTrusted(read, file, hash)).toBe(true);
     expect(isTrusted(read, file, sha256('{"a":2}'))).toBe(false);
     expect(isTrusted(read, '/elsewhere/.adtplus/systems.json', hash)).toBe(false);
@@ -103,12 +103,5 @@ describe('trust store', () => {
     await approve('/b', 'h2', store);
 
     expect(Object.keys(JSON.parse(readFileSync(store, 'utf8')))).toEqual(['/a', '/b']);
-  });
-
-  it('asks again for a file setting an object field approved before objects merged key by key (ADR-006)', () => {
-    const before = { '/p': { sha256: 'h', approvedAt: '2026-09-28T12:00:00.000Z' } };
-    expect(isTrusted(before, '/p', 'h')).toBe(true);
-    expect(isTrusted(before, '/p', 'h', true)).toBe(false);
-    expect(isTrusted({ '/p': { ...before['/p'], merge: 2 } }, '/p', 'h', true)).toBe(true);
   });
 });

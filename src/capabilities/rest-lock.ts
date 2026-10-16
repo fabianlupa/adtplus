@@ -1,5 +1,5 @@
 import { decodeXml, type RawAdtClient } from '../backends/rawadt.js';
-import { readPackageDefinition } from './package.js';
+import { readPackageDefinition, type PackageDefinition } from './package.js';
 
 // --- REST fallback: the lock sequence of a form-based object ----------------------------------
 //
@@ -20,14 +20,15 @@ export interface LockedObject {
 }
 
 /** A package recording changes needs a request for every change of an object in it. */
-export async function assertRecordable(rest: RawAdtClient, pkg: string, kind: string, what: string): Promise<void> {
+export async function assertRecordable(rest: RawAdtClient, pkg: string, kind: string, what: string): Promise<PackageDefinition> {
   const definition = await readPackageDefinition(rest, pkg);
-  if (definition?.recordChanges !== false) {
+  if (!definition || definition.recordChanges !== false) {
     throw new Error(
       `${what}: package ${pkg} records changes and no request holds the ${kind}; pass "transport" ` +
         `(CLI --transport), the request to record it in. Without one SAP would write it unrecorded`,
     );
   }
+  return definition;
 }
 
 /**

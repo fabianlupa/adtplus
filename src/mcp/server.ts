@@ -669,7 +669,9 @@ export function createMcpServer(
         '`update` adds or changes `messages` (each with its number: adt+ picks none); a changed description is ' +
         'refused (SAP records it wrongly), the self-explanatory flag and long texts stay as they are, and there is no ' +
         'inactive version: a write is live at once. A package: `create` makes a development package directly under ' +
-        '`package` with the system\'s ABAP language version (preview it with `adtplus_object validate`); `update` ' +
+        '`package`, taking the software component and, on premise, the ABAP language version from it unless ' +
+        '`properties.generalInformation` names them (no component on either: ask the user which one; on a cloud system ' +
+        'the version is always cloudDevelopment; preview it with `adtplus_object validate`); `update` ' +
         'changes `header.description` and `generalInformation.applicationComponent`. A translation project (TRPR, SAP\'s ' +
         '"Maintain Translations", only with allowTranslations: true): `update` with `properties.translations` writes texts ' +
         '(uploads and publishes them per language pair, into the project\'s request): entries as `adtplus_object read` ' +
@@ -681,7 +683,7 @@ export function createMcpServer(
         'unpublish a service binding (SRVB): refused, with nothing sent, when it already is; otherwise sent, then ' +
         'polled until the read-back shows it, which can take MINUTES (measured on cloud: ~132 s each way; a cloud ' +
         'unpublish is refused for a few minutes after a publish). Requires confirm: true, ' +
-        'and a system whose policy does not set allowPublishService: false. `generate` runs a RAP generator ' +
+        'and a system whose policy does not set allowPublish: false. `generate` runs a RAP generator ' +
         '(`adtplus_object generators`/`generatorSchema` first) into `package`: it creates every object in `content` at ' +
         'once, active, and fails with nothing created when a name exists. `applyQuickfixes` applies every deterministic ATC ' +
         'quick fix of a worklist (`adtplus_quality atc` with quickfixes: true gives the `worklistId`) to all its objects, ' +
@@ -899,7 +901,7 @@ export function createMcpServer(
         '`format` returns the object\'s source formatted (`formatted`, `changed`); with `source` it formats that text ' +
         'instead, e.g. before `adtplus_object_write update`. It never saves: write the result with `update` if ' +
         'wanted. Layout only (case, indentation, alignment); a result that changed code is refused. `atc` runs ATC static ' +
-        'analysis, `abaplint` a local abaplint pass (cloud/on-prem rule preset from system policy). `syntax`, `atc` and ' +
+        'analysis, `abaplint` a local abaplint pass (each object at its own ABAP language version: cloudDevelopment on a cloud system, on premise the one its .json names). `syntax`, `atc` and ' +
         '`abaplint` take one object, or several (`refs`, or a `package`) with one summary: check a batch of ' +
         'changed objects in one call, not one call per object. abaplint lints a batch together, so ' +
         'references between its objects resolve. `atc` with quickfixes: true runs ATC through SAP\'s worklist ' +

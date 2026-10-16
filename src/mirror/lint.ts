@@ -65,10 +65,15 @@ export interface LintFinding {
   message: string;
 }
 
+/** An ABAP language version, AFF's name. */
+export type AffLanguageVersion = 'standard' | 'keyUser' | 'cloudDevelopment';
+
 export interface LintResult {
   findings: LintFinding[];
   /** Objects linted. */
   objects: number;
+  /** Objects linted per language version. */
+  languageVersions: Partial<Record<AffLanguageVersion, number>>;
   /** Objects of types abaplint doesn't know, per type: not linted. */
   unknownTypes: Record<string, number>;
 }
@@ -144,15 +149,67 @@ function isKnownType(type: string): boolean {
   return known;
 }
 
+/** The object a file belongs to: `zcl_x.clas` for `src/zcl_x.clas.locals_imp.abap`. */
+export function objectStem(file: string): string {
+  return (file.split('/').pop() ?? '').toLowerCase().split('.').slice(0, 2).join('.');
+}
+
 /**
- * Lint `files` (path + text; the path's base name is the AFF file name). A
- * rule that throws on one object costs that object a warning, not the run.
+ * An object's language version from its AFF `.json`: `header.abapLanguageVersion`. Undefined
+ * without one (the caller's fallback, the system's: some types' headers never carry it) and for
+ * text that isn't such a file.
+ */
+export function affLanguageVersion(text: string): AffLanguageVersion | undefined {
+  let header: unknown;
+  try {
+    header = (JSON.parse(text) as { header?: unknown }).header;
+  } catch {
+    return undefined;
+  }
+  if (typeof header !== 'object' || header === null) return undefined;
+  const version = (header as { abapLanguageVersion?: unknown }).abapLanguageVersion;
+  return version === 'standard' || version === 'keyUser' || version === 'cloudDevelopment' ? version : undefined;
+}
+
+/**
+ * Lint `files` (path + text; the path's base name is the AFF file name), each object at the
+ * language version its `.json` names, `fallback` for one without. abaplint takes one version
+ * per registry, so each version is a run of its own; a reference between them is void, like any
+ * outside the files. A rule that throws on one object costs that object a warning, not the run.
  */
 export async function lint(
   files: Array<{ path: string; text: string }>,
-  languageVersion: LanguageVersion,
+  fallback: AffLanguageVersion,
   rules?: RuleSwitches,
 ): Promise<LintResult> {
+  const named = new Map<string, AffLanguageVersion>();
+  for (const f of files) {
+    const version = f.path.toLowerCase().endsWith('.json') ? affLanguageVersion(f.text) : undefined;
+    if (version) named.set(objectStem(f.path), version);
+  }
+  const groups = new Map<AffLanguageVersion, Array<{ path: string; text: string }>>();
+  for (const f of files) {
+    const version = named.get(objectStem(f.path)) ?? fallback;
+    const group = groups.get(version);
+    if (group) group.push(f);
+    else groups.set(version, [f]);
+  }
+  const result: LintResult = { findings: [], objects: 0, languageVersions: {}, unknownTypes: {} };
+  for (const [version, group] of groups) {
+    const one = await lintOneVersion(group, abaplintVersion(version), rules);
+    result.findings.push(...one.findings);
+    result.objects += one.objects;
+    if (one.objects > 0) result.languageVersions[version] = one.objects;
+    for (const [type, n] of Object.entries(one.unknownTypes)) result.unknownTypes[type] = (result.unknownTypes[type] ?? 0) + n;
+  }
+  return result;
+}
+
+async function lintOneVersion(
+  files: Array<{ path: string; text: string }>,
+  languageVersion: LanguageVersion,
+  rules?: RuleSwitches,
+): Promise<Omit<LintResult, 'languageVersions'>> {
   const registry = new Registry(stageOneConfig(languageVersion, rules));
   const unknownTypes: Record<string, number> = {};
   const unknownObjects = new Set<string>();
@@ -202,7 +259,8 @@ export async function lint(
   };
 }
 
-/** The abaplint language version for a system's `languageVersion` (as `quality.abaplint` maps it). */
-export function abaplintVersion(languageVersion: string | undefined): LanguageVersion {
-  return languageVersion === 'cloudDevelopment' ? LanguageVersion.Cloud : LanguageVersion.Normal;
+/** abaplint's language version for an AFF one. */
+export function abaplintVersion(languageVersion: AffLanguageVersion): LanguageVersion {
+  if (languageVersion === 'cloudDevelopment') return LanguageVersion.Cloud;
+  return languageVersion === 'keyUser' ? LanguageVersion.KeyUser : LanguageVersion.Normal;
 }

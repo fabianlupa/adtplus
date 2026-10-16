@@ -226,7 +226,7 @@ export function gitWorld() {
           systemUrl: 'https://onprem.example',
           extraCaCerts: [],
           writeAllowlist: [],
-          mirror: { git: { enabled: true } },
+          allowGitRemote: true,
           ...extra,
         },
       },

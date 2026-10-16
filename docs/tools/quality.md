@@ -94,12 +94,16 @@ line ends, ending in a newline when the input does), `changed`, `engine`, `input
 
 ## abaplint
 
-- Cloud/on-prem preset from `languageVersion`; the main source only.
+- Each object at its own ABAP language version: on `cloud` ABAP for Cloud Development; on `onprem`
+  read from its AFF `.json` beside the main file (one more `readFile` per object), standard when
+  that can't be read. The result names it (`languageVersion`; a batch: `languageVersions`, objects
+  per version). The main source only.
 - `mirror check`'s rules, error split (ADR-012) and per-type drops; `rules` switches more on or
   off.
 - `no_comments_between_methods` isn't reported on an `ENDMETHOD` line, which SAP stores.
-- Batch as atc, but all sources go into one registry, so with `check_syntax` switched on a call
-  into another batch object is checked.
+- Batch as atc, but the sources go into one registry per language version (abaplint takes one per
+  run), so with `check_syntax` switched on a call into another batch object of the same version is
+  checked; one into another version is void.
 
 ## Known issues
 

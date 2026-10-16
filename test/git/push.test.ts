@@ -264,7 +264,7 @@ describe('git push', () => {
   });
 
   it('a system without the opt-in: an error, the shadow back as it was', async () => {
-    const { send: closed } = world.daemonWith(sys, { mirror: {} });
+    const { send: closed } = world.daemonWith(sys, { allowGitRemote: false });
     commit({ [CLS]: 'CLASS zcl_a DEFINITION.\n  " x\nENDCLASS.\n' });
     const pushed = await push(undefined, {}, closed);
     expect(pushed.answer).toMatch(/^error refs\/heads\/main git remote not enabled for onprem/);

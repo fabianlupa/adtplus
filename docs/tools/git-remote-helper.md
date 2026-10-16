@@ -4,9 +4,9 @@
 
 `git-remote-adtplus` (ADR-011), the second `bin`: git runs it for
 `adtplus::<system>/package/<PKG>` (optional `?no-subpackages`) and `adtplus::<system>/swc/<SWC>`,
-on systems with `mirror.git.enabled` only (refused before any SAP call otherwise). No MCP tool.
+on systems with `allowGitRemote` only (refused before any SAP call otherwise). No MCP tool.
 Install: [README](../../README.md#get-started); settings:
-[configuration.md](../configuration.md#mirror). It works on a shadow mirror in
+[configuration.md](../configuration.md#git-remote-off-by-default). It works on a shadow mirror in
 `$GIT_DIR/adtplus/<remote>/` and reuses the [mirror](mirror.md)'s pull and push.
 
 With `adtplus.history=transports` each released transport request becomes a commit:

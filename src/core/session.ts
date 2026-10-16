@@ -11,7 +11,7 @@ import { RawAdtClient, RawAdtError, trackWrites } from '../backends/rawadt.js';
 import { probeNativeSupport, type NativeSupport } from './capabilities.js';
 import type { Destination } from './destinations.js';
 import { readKeychainSecret } from './keychain.js';
-import { captureReentranceTicket, defaultSsoUrl, redeemReentranceTicket } from './reentrance.js';
+import { captureReentranceTicket, defaultReentranceUrl, redeemReentranceTicket } from './reentrance.js';
 
 function openBrowser(url: string): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -269,7 +269,7 @@ export async function connectRest(destination: Destination): Promise<RawAdtClien
     });
   }
   const ticket = await captureReentranceTicket({
-    ssoUrl: destination.ssoUrl ?? defaultSsoUrl(destination.systemUrl),
+    reentranceUrl: destination.reentranceUrl ?? defaultReentranceUrl(destination.systemUrl),
     openUrl: openBrowser,
   });
   return redeemReentranceTicket(destination.systemUrl, destination.client, ticket, logonLanguage(destination));
@@ -293,9 +293,9 @@ interface RestEntry {
  * shares the session (docs/decisions/006-layered-config.md).
  */
 export function connectionHash(destination: Destination): string {
-  const { kind, auth, client, systemUrl, ssoUrl, user, keychainService, extraCaCerts } = destination;
+  const { kind, auth, client, systemUrl, reentranceUrl, user, keychainService, extraCaCerts } = destination;
   return createHash('sha256')
-    .update(JSON.stringify([kind, auth, client, systemUrl, ssoUrl ?? null, user ?? null, keychainService ?? null, extraCaCerts, logonLanguage(destination)]))
+    .update(JSON.stringify([kind, auth, client, systemUrl, reentranceUrl ?? null, user ?? null, keychainService ?? null, extraCaCerts, logonLanguage(destination)]))
     .digest('hex');
 }
 

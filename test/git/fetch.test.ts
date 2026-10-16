@@ -335,7 +335,7 @@ describe('git fetch (import)', () => {
   });
 
   it('a system without the opt-in: refused before any SAP call', async () => {
-    const { send, sessionManager } = daemonWith(fakeSystem(PACKAGE), { mirror: {} });
+    const { send, sessionManager } = daemonWith(fakeSystem(PACKAGE), { allowGitRemote: false });
     await expect(fetchInto(send)).rejects.toThrow(/git remote not enabled for onprem/);
     expect(sessionManager.get).not.toHaveBeenCalled();
   });

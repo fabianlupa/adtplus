@@ -4,6 +4,7 @@ import type { Destination } from '../core/destinations.js';
 import type { PackageChainLookup } from '../core/placement.js';
 import { logonLanguage } from '../core/session.js';
 import { matchingLines } from './object.js';
+import { newObjectLanguageVersion } from './package.js';
 import { assertConfirmed, assertPackageWritable } from './policy.js';
 import { assertRecordable, validationMessage, writeLocked, type LockedObject } from './rest-lock.js';
 
@@ -203,8 +204,9 @@ export interface CreateMessageClassInput {
 
 /**
  * Create an empty message class in an allowlisted package, after SAP's own name check, and read
- * it back. The texts' language is the logon language; the ABAP language version is the system's
- * (`languageVersion` in systems.json), sent when not standard.
+ * it back. The texts' language is the logon language; the ABAP language version is its package's
+ * default, on a cloud system ABAP for Cloud Development (`newObjectLanguageVersion`), sent when
+ * not standard.
  */
 export async function createMessageClass(
   rest: RawAdtClient,
@@ -217,7 +219,7 @@ export async function createMessageClass(
   checkDescription(input.description);
   const pkg = input.packageName.toUpperCase();
   await assertPackageWritable(destination, pkg, { lookupChain });
-  if (!input.transport) await assertRecordable(rest, pkg, 'message class', `message class ${name} not created`);
+  const read = input.transport ? undefined : await assertRecordable(rest, pkg, 'message class', `message class ${name} not created`);
   const validation = await rest.request('POST', `${PATH}/validation`, {
     changesNothing: true,
     query: { objname: name, description: input.description, packagename: pkg },
@@ -226,7 +228,7 @@ export async function createMessageClass(
   if (validation.status >= 400) {
     throw new RawAdtError(validation.status, undefined, validationMessage(validation.body), `create message class ${name}`);
   }
-  const languageVersion = destination.languageVersion;
+  const languageVersion = await newObjectLanguageVersion(rest, destination, pkg, read);
   await rest.expectOk('POST', PATH, `create message class ${name}`, {
     query: { corrNr: input.transport ?? '' },
     headers: { 'Content-Type': MEDIA_TYPE, Accept: MEDIA_TYPE },
@@ -235,7 +237,7 @@ export async function createMessageClass(
       description: input.description,
       package: pkg,
       masterLanguage: logonLanguage(destination),
-      ...(languageVersion && languageVersion !== 'standard' ? { abapLanguageVersion: languageVersion } : {}),
+      ...(languageVersion !== 'standard' ? { abapLanguageVersion: languageVersion } : {}),
     }),
   });
   const created = await readMessageClassDefinition(rest, name);

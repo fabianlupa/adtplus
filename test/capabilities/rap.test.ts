@@ -26,7 +26,6 @@ const destination: Destination = {
   systemUrl: 'https://onprem.example',
   extraCaCerts: [],
   writeAllowlist: [{ package: 'ZADTPLUS_TEST', subpackages: true }],
-  languageVersion: 'standard',
 };
 
 const PROPOSAL = {

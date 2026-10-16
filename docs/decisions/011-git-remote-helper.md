@@ -32,7 +32,7 @@ re-read. adt-ls has none of this: no released-request search, no version history
 
 ### Opt-in
 
-Per system, off by default: `"mirror": { "git": { "enabled": true } }`. Without it the helper is
+Per system, off by default: `"allowGitRemote": true`, a gate like the other `allow*` switches (ADR-003). Without it the helper is
 refused before any SAP call. The root-package rule and `mirror.maxObjects` apply as in mirror
 mode; `adtplus.maxObjects` in git config raises the ceiling without an upper bound.
 
@@ -99,3 +99,4 @@ unbounded component search); a component's search is checked against the object 
 ## Changes
 
 - 2026-10-15: restated as it holds today for the public release, with the retired ADR it absorbed merged in.
+- 2026-10-16: the opt-in is `allowGitRemote`, no longer `mirror.git.enabled`: a gate is a flat `allow*` switch, and a project config turns it off with one field.

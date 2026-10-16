@@ -58,7 +58,7 @@ beforeEach(() => {
         systemUrl: 'https://onprem.example',
         extraCaCerts: [],
         writeAllowlist: [{ package: 'ZADTPLUS_A', subpackages: true }],
-        mirror: { git: { enabled: true } },
+        allowGitRemote: true,
       },
     },
     socketPath: path.join(run, 'adtplus.sock'),

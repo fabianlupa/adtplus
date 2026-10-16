@@ -31,7 +31,7 @@ next to the work, instead of in one global `systems.json`. Three things constrai
   nearest file that sets it. An object (`mirror`, `rateLimit`, `format`) merges key by key at every
   depth; a scalar or a list (`writeAllowlist`, `extraCaCerts`, `mirror.namespaces`) replaces the
   inherited one and is never appended. A project takes an inherited setting away only by setting
-  it (`"git": {"enabled": false}`, `"namespaces": []`), never by leaving it out.
+  it (`"allowGitRemote": false`, `"namespaces": []`), never by leaving it out.
 - Every field may be set at either level, the gate fields included.
 - Relative paths in a project config resolve against the folder holding its `.adtplus/`.
 
@@ -46,8 +46,6 @@ next to the work, instead of in one global `systems.json`. Three things constrai
   (`systemUrl`, `client`, `user`, `keychainService`) and any widened gate first. An object field
   shows what it becomes after the merge beside what it was; a setting that names a program adt+
   runs is marked ⚠.
-- An approval records the merge rule it was given under, so a file whose content means something
-  else under a changed rule is asked for again.
 - Denied or not yet approved: every system that file touches is refused, with an error naming the
   file. Nothing falls back silently to the user-level values.
 - `adtplus config trust` exists as the fallback where no dialog can be shown, and says it is the
@@ -62,7 +60,7 @@ next to the work, instead of in one global `systems.json`. Three things constrai
   mtime. Project configs aren't part of the daemon's identity stamp, so a project folder never
   replaces the daemon.
 - **Sessions are keyed by the connection fields**: where a system connects, as whom and trusting
-  which CAs (`kind`, `auth`, `client`, `systemUrl`, `ssoUrl`, `user`, `keychainService`,
+  which CAs (`kind`, `auth`, `client`, `systemUrl`, `reentranceUrl`, `user`, `keychainService`,
   `extraCaCerts`, the logon language; `connectionHash` in `src/core/session.ts`). A project that
   changes only policy fields shares the user-level session; one that changes the connection gets
   its own. Two projects may use the same system id.
@@ -73,7 +71,7 @@ next to the work, instead of in one global `systems.json`. Three things constrai
 ## Why
 
 - Leaving a key out of a project config keeps the inherited value, at every depth: a project that
-  sets `mirror.maxObjects` must not drop the user's `mirror.git.enabled` without a word.
+  sets `mirror.maxObjects` must not drop the user's `mirror.namespaces` without a word.
 - Lists replace so a project can narrow the write allowlist; every key a project sets is shown in
   the dialog before it applies, so it can't widen a gate unseen.
 
@@ -88,3 +86,4 @@ next to the work, instead of in one global `systems.json`. Three things constrai
 ## Changes
 
 - 2026-10-15: restated as it holds today for the public release, with the retired ADRs it absorbed merged in.
+- 2026-10-16: the git opt-in moved out of `mirror` to the flat gate `allowGitRemote` (ADR-011); `ssoUrl` renamed `reentranceUrl`; an approval no longer records the merge rule it was given under (no approval predates the public release).

@@ -3,6 +3,7 @@ import type { NativeSupport } from '../core/capabilities.js';
 import type { Destination } from '../core/destinations.js';
 import type { PackageChainLookup } from '../core/placement.js';
 import { logonLanguage } from '../core/session.js';
+import { newObjectLanguageVersion } from './package.js';
 import { assertConfirmed, assertPackageWritable } from './policy.js';
 import type { RestActivationObject } from './rest-activation.js';
 import { assertRecordable, validationMessage, writeLocked } from './rest-lock.js';
@@ -142,8 +143,8 @@ export interface CreateFormObjectInput<T extends FormObject> {
 
 /**
  * Create the object, never activated, in an allowlisted package, after SAP's own name check, and
- * read it back. Its texts are in the logon language; its ABAP language version is the system's
- * (`languageVersion` in systems.json), sent when not standard.
+ * read it back. Its texts are in the logon language; its ABAP language version is its package's
+ * default, on a cloud system ABAP for Cloud Development (`newObjectLanguageVersion`).
  */
 export async function createFormObject<T extends FormObject>(
   kind: FormObjectKind<T>,
@@ -161,12 +162,13 @@ export async function createFormObject<T extends FormObject>(
     description: input.description,
     package: pkg,
     masterLanguage: logonLanguage(destination),
-    abapLanguageVersion: destination.languageVersion ?? 'standard',
+    abapLanguageVersion: 'standard',
     version: 'new',
   } as T;
   check(kind, object);
   await assertPackageWritable(destination, pkg, { lookupChain });
-  if (!input.transport) await assertRecordable(rest, pkg, kind.kind, `${kind.kind} ${name} not created`);
+  const read = input.transport ? undefined : await assertRecordable(rest, pkg, kind.kind, `${kind.kind} ${name} not created`);
+  object.abapLanguageVersion = await newObjectLanguageVersion(rest, destination, pkg, read);
   const validation = await rest.request('POST', `${kind.path}/validation`, {
     changesNothing: true,
     query: { objname: name, description: input.description, packagename: pkg },

@@ -8,7 +8,7 @@ terminal ───────────► adt+ CLI (dist/cli/index.js) ─�
 git ────────────────► git-remote-adtplus (dist/git/main.js) ┤
                                                            ▼   unix socket, 0600
                       daemon (dist/daemon/server.js) — one per user, idle-exit 30 min
-                        gates: ADTPLUS_READONLY · ADTPLUS_DENY · session mirrors · writeAllowlist · allowRun · allowDataPreview · allowRuntimeLogs · allowTranslations · mirror.git.enabled · rate limit
+                        gates: ADTPLUS_READONLY · ADTPLUS_DENY · session mirrors · writeAllowlist · allowRun · allowDataPreview · allowRuntimeLogs · allowTranslations · allowGitRemote · rate limit
                         capabilities/  package · transport · object · navigate · quality · run · datapreview · translations
                         backends:      adt-ls via @arc-mcp/adt-ls  →  rawadt (REST, fallback only)  →  odata-ui (UI_SMTR_PROJECT on rawadt's session)
                         sessions:      one adt-ls JVM per system + one REST cookie jar per system
@@ -91,19 +91,10 @@ git ────────────────► git-remote-adtplus (dist
 
 `~/.config/adtplus/systems.json` (untracked, no secrets), plus approved
 `.adtplus/systems.json` project configs merged field by field on top, objects key by key (ADR-006;
-clients send their paths per request, the daemon reads them): per system `kind`,
-`auth`, `client` (never `000`/`066`, ADR-005), URL or `adtlsDestinationId`, `user`, `keychainService`,
-`language` (the logon language of both sessions, `sap-language` on every REST request; default EN),
-`extraCaCerts`, `languageVersion` (enforced on package create),
-`defaultSoftwareComponent`, `writeAllowlist`, `vfsMount` (the VS Code mount name
-the daemon re-roots repotree URIs onto: in results and in every error text), optional `allowPublishService: false`, `allowRun: true` (enables
-`adtplus_run`, ADR-005), `allowDataPreview: true` (enables `adtplus_data`, ADR-013), `allowRuntimeLogs: true` (enables `adtplus_runtime`, ADR-015), `allowTranslations: true` (enables `object translations` and the TRPR type, ADR-019), `rateLimit` (ADR-005, ADR-008), `mirror` (ADR-007; `mirror.git.enabled`
-opts the system into the git remote helper, ADR-011), `format` (`quality format`'s engine and the abap-cleaner binary, profile and release, ADR-017). A clone's own preferences live in its git
-config (`adtplus.*`).
-Destinations are also read from ADT for VS Code's `~/.adtls/destinations.json`.
-
-Environment: `ADTPLUS_CONFIG` (user config path), `ADTPLUS_PROJECT` (folder to look for project configs from), `ADTPLUS_READONLY`, `ADTPLUS_DENY` (ADR-003), `ADTPLUS_LOG` (call
-log, on by default with metadata only; `0` turns it off), `ADTPLUS_REPO` (launcher only).
+clients send their paths per request, the daemon reads them). Every field, its default and the
+environment variables: [configuration.md](configuration.md#systems). A clone's own preferences live
+in its git config (`adtplus.*`). Destinations are also read from ADT for VS Code's
+`~/.adtls/destinations.json`.
 
 ## Code layout
 
@@ -140,7 +131,7 @@ log, on by default with metadata only; `0` turns it off), `ADTPLUS_REPO` (launch
 | `src/cli/index.ts` | `adtplus <area> <action> --system … --flag value` |
 | `src/cli/config.ts` | `adtplus config show\|validate\|schema\|trust`, local, no daemon |
 | `src/cli/mirror.ts` | `adtplus mirror init\|pull\|status\|check\|new\|push\|activate` requests; the working folder is the workspace folder |
-| `src/git/` | `git-remote-adtplus` (ADR-011): the remote-helper protocol loop (`protocol.ts`), the address (`package/` or `swc/`, `address.ts`), `import` bringing a shadow mirror in `$GIT_DIR/adtplus/<remote>/` up to date (change stamps, then a pull of the objects whose stamp moved, or a full one) and answering with transport commits and one sync commit (`fetch.ts`; which objects to re-read, `incremental.ts`; the shadow's `state.json`/`stamps.json`, `state.ts`; transport commits, `history.ts`), `push` through the shadow and `mirror push` (`push.ts`), the fast-import stream, git plumbing, stderr progress (`output.ts`); a daemon client of kind `git`, which the daemon refuses on systems without `mirror.git.enabled` |
+| `src/git/` | `git-remote-adtplus` (ADR-011): the remote-helper protocol loop (`protocol.ts`), the address (`package/` or `swc/`, `address.ts`), `import` bringing a shadow mirror in `$GIT_DIR/adtplus/<remote>/` up to date (change stamps, then a pull of the objects whose stamp moved, or a full one) and answering with transport commits and one sync commit (`fetch.ts`; which objects to re-read, `incremental.ts`; the shadow's `state.json`/`stamps.json`, `state.ts`; transport commits, `history.ts`), `push` through the shadow and `mirror push` (`push.ts`), the fast-import stream, git plumbing, stderr progress (`output.ts`); a daemon client of kind `git`, which the daemon refuses on systems without `allowGitRemote` |
 | `dev/` | development scripts: parallel daemons, the public-safety gate, the README logo (ADR-020) |
 
 ## Design rules that recur

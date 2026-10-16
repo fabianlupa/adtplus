@@ -29,8 +29,36 @@ It holds no secrets, only the name of a Keychain service:
 }
 ```
 
-All fields are listed in [architecture.md](architecture.md#configuration).
-`extraCaCerts` paths may start with `~/` or be relative to the file's folder.
+Every field, per system:
+
+| Field | Default | Details |
+|---|---|---|
+| `kind` | required: `onprem` or `cloud` | [Connection](#connection) |
+| `auth` | required: `basic` or `interactive` | [Connection](#connection) |
+| `client` | required | [Connection](#connection) |
+| `systemUrl` | or `adtlsDestinationId` | [Connection](#connection) |
+| `adtlsDestinationId` | or `systemUrl` | [Connection](#connection) |
+| `reentranceUrl` | `systemUrl` without `-api` | [Connection](#connection) |
+| `user` | required for `basic` | [Connection](#connection) |
+| `keychainService` | required for `basic` | [Connection](#connection) |
+| `language` | `EN` | [Connection](#connection) |
+| `extraCaCerts` | none | [Connection](#connection) |
+| `vfsMount` | none | [VS Code mount](#vs-code-mount) |
+| `writeAllowlist` | empty: no writes | [Write allowlist](#write-allowlist) |
+| `allowRun` | `false` | [Run](#run-off-by-default) |
+| `allowPublish` | `true` | [Publishing services](#publishing-services-on-by-default) |
+| `allowDataPreview` | `false` | [Data preview](#data-preview-off-by-default) |
+| `allowRuntimeLogs` | `false` | [Runtime logs](#runtime-logs-off-by-default) |
+| `allowTranslations` | `false` | [Translations](#translations-off-by-default) |
+| `allowGitRemote` | `false` | [Git remote](#git-remote-off-by-default) |
+| `rateLimit` | `concurrency` 4, `perMinute` 600 | [Rate limit](#rate-limit) |
+| `restTimeout` | 120 s | [REST timeout](#rest-timeout) |
+| `mirror` | `concurrency` 3, `maxObjects` 500 | [Mirror](#mirror) |
+| `format` | engine `sap` | [Format](#format) |
+
+The environment variables are under [Environment](#environment), a git clone's own settings under
+[Git remote](#git-remote-off-by-default).
+
 An invalid file fails with its path and one line per bad field
 (`onprem.writeAllowlist.0: …`). An unknown field is an error too, so a typo such as
 `writeAllowList` can't be silently ignored.
@@ -58,11 +86,40 @@ An invalid file fails with its path and one line per bad field
 
   `$schema` is the one top-level key that isn't a system. Regenerate the file
   after an adt+ update adds a field.
-adt+ also reads destinations from ADT for VS Code's `~/.adtls/destinations.json`.
 
-adt+ refuses the SAP-reserved clients `000` and `066` (ADR-005): a system
-configured with either makes loading `systems.json` fail with an error naming
-the system, before any logon. `"0"` and `"66"` count as the same clients.
+## Connection
+
+Where a system connects and as whom. A project config that changes one of these gets its own
+session ([Sessions](#project-configs)).
+
+- **`kind`:** `onprem` for an on-premise system, `cloud` for S/4HANA Cloud. It also sets the ABAP
+  language version: on `cloud` everything is ABAP for Cloud Development; on `onprem` an object has
+  its own, and a new one gets its package's default ([packages](tools/packages.md#create),
+  [objects](tools/objects.md)).
+- **`auth`:** `basic` logs on with `user` and the password from the Keychain; `interactive` opens
+  the browser for SSO on first use, one window for both the adt-ls and the REST session.
+- **`client`:** the SAP client, as a string (`"100"`). adt+ refuses the SAP-reserved clients `000`
+  and `066` (ADR-005): a system configured with either makes loading `systems.json` fail with an
+  error naming the system, before any logon. `"0"` and `"66"` count as the same clients.
+- **`systemUrl`:** the system's HTTP(S) URL. Without it, **`adtlsDestinationId`** names an entry of
+  ADT for VS Code's `~/.adtls/destinations.json` to take the URL from; that entry must use protocol
+  `http` (an RFC entry fails, naming `systemUrl`). One of the two is required.
+- **`reentranceUrl`:** the host an `interactive` system's REST session logs on at, with a
+  reentrance ticket. Default: `systemUrl` without `-api` (`my000000-api.s4hana.cloud.sap` →
+  `my000000.s4hana.cloud.sap`); set it only where the logon host differs otherwise.
+- **`user`** and **`keychainService`:** for `basic`, the logon user and the service name of the
+  macOS Keychain generic password holding the password. `systems.json` never holds the password.
+- **`language`:** the logon language of both sessions, two letters, default `EN`: messages come in
+  it, and what adt+ creates over REST gets it as master language.
+- **`extraCaCerts`:** PEM files to trust besides the system's CAs. A path may start with `~/` or be
+  relative to the file's folder (for a project config, the folder holding `.adtplus/`).
+
+## VS Code mount
+
+- **`vfsMount`:** the folder name ADT for VS Code mounts this system under
+  (`abap:/repotree-v1/<vfsMount>/…`). The daemon writes repotree URIs onto it, in results and error
+  texts, so a URI adt+ hands out opens in the editor. Without it, URIs name adt+'s own
+  `adtplus_<system>` mount. A policy field: it doesn't change the session.
 
 ## Project configs
 
@@ -75,9 +132,8 @@ the start folder up to, but not including, `$HOME`; none outside `$HOME`.
   that sets it. A list (`writeAllowlist`, `extraCaCerts`, `mirror.namespaces`)
   replaces the inherited one; it is not appended. An object (`mirror`, `rateLimit`)
   merges key by key, at every depth: `{"onprem": {"mirror": {"maxObjects": 2000}}}`
-  keeps the inherited `mirror.git` and `mirror.namespaces` ([ADR-006](decisions/006-layered-config.md)).
-  To take one away, set it (`"git": {"enabled": false}`). A file setting an object
-  field that was approved before this rule is asked for again once.
+  keeps the inherited `mirror.concurrency` and `mirror.namespaces` ([ADR-006](decisions/006-layered-config.md)).
+  To take one away, set it (`"namespaces": []`, `"allowGitRemote": false`).
 - Every field may be set in a project config, the gates included. A project
   config may set a single field, e.g. `{"onprem": {"writeAllowlist": ["ZCUST"]}}`.
 - Relative `extraCaCerts` resolve against the folder holding `.adtplus/`.
@@ -184,7 +240,7 @@ caches the tool list; see [known-issues.md](known-issues.md#operations)).
 ## Publishing services (on by default)
 
 `adtplus_object_write publish` and `unpublish` (CLI `adtplus object publish|unpublish`) are on
-unless the system sets `"allowPublishService": false` in `systems.json` or an approved project
+unless the system sets `"allowPublish": false` in `systems.json` or an approved project
 config (ADR-003).
 
 - With it set, the daemon refuses both on that system before any SAP call, with an error naming
@@ -305,7 +361,7 @@ Mirror mode (ADR-007) pulls packages as AFF files into a local folder. Per
 system in `systems.json`, all optional:
 
 ```json
-"mirror": { "concurrency": 3, "maxObjects": 500, "namespaces": ["/NSPC/"], "git": { "enabled": true } }
+"mirror": { "concurrency": 3, "maxObjects": 500, "namespaces": ["/NSPC/"] }
 ```
 
 - **`concurrency`:** calls the mirror commands and the git helper keep in flight
@@ -317,20 +373,6 @@ system in `systems.json`, all optional:
 - **`namespaces`:** customer namespaces whose packages may be mirrored. Without
   them only packages starting with `Z`, `Y` or `$` can be a mirror's root
   package.
-- **`git.enabled`:** `true` lets `git clone adtplus::<system>/package/<PKG>`
-  (or `…/swc/<SWC>`) use the system (ADR-011); off unless set. Without it every request of the git
-  remote helper is refused: "git remote not enabled for <system>".
-
-A clone's own settings are git config (`git clone -c …` or `git config` in the
-clone): **`adtplus.maxObjects`** raises the object ceiling for its fetches and pushes, like
-`--max-objects` on a pull (for a software component also its search, which is refused above it); **`adtplus.transport`** is the request a push records in when
-`-o transport=` doesn't name one; **`adtplus.fullFetch`** `true` (that spelling only) makes every fetch a full read
-instead of re-reading only the objects whose change stamp moved; **`adtplus.history`**
-`transports` (default `none`) adds one commit per released transport request (ADR-011), from
-**`adtplus.since`** on (a date, default one year before the clone). History is fixed at the clone:
-both count when the clone is made (`git clone -c adtplus.history=transports …`); switched on
-later, history starts with that fetch.
-
 Mirror commands (`mirror.init`, `pull`, `push`, `activate`) and the git helper's own
 (`mirror.changes`, `swc.packages`, `history.versions`, `history.released`) run in a **bulk lane** of the rate limit (ADR-008): bounded by
 `mirror.concurrency` calls in flight, not paced per minute, never refused for
@@ -338,6 +380,33 @@ budget, and their units don't count against `perMinute`, so a clone running at
 full speed leaves the interactive budget to other commands. A 429/503 cooldown
 stops them like any command; running them again carries on. Their results still
 report `units` next to `calls` (a pull weighs about 6.8 units per object).
+
+## Git remote (off by default)
+
+`git clone adtplus::<system>/package/<PKG>` (or `…/swc/<SWC>`) and the fetches and pushes of such a
+clone work only on a system that sets `"allowGitRemote": true` in `systems.json` or an approved
+project config (ADR-011). Without it every request of the git remote helper is refused before any
+SAP call: "git remote not enabled for <system>". The daemon reads it per request. The mirror's
+limits apply to a clone too ([Mirror](#mirror)).
+
+A clone's own settings are git config (`git clone -c …` or `git config` in the clone):
+
+| Key | Default | |
+|---|---|---|
+| `adtplus.maxObjects` | `mirror.maxObjects` | object ceiling of its fetches and pushes |
+| `adtplus.transport` | none | the request a push records in |
+| `adtplus.fullFetch` | `false` | every fetch a full read |
+| `adtplus.history` | `none` | `transports`: a commit per released request |
+| `adtplus.since` | a year before the clone | first release date `history` takes |
+
+- **`adtplus.maxObjects`** works like `--max-objects` on a pull, without an upper bound; for a
+  software component it also bounds its search, which is refused above it.
+- **`adtplus.transport`** counts where `git push -o transport=` names none.
+- **`adtplus.fullFetch`** `true` (that spelling only) re-reads every object instead of only those
+  whose change stamp moved.
+- **`adtplus.history`** and **`adtplus.since`** are fixed at the clone: both count when the clone is
+  made (`git clone -c adtplus.history=transports …`); switched on later, history starts with that
+  fetch.
 
 ## Format
 
@@ -365,6 +434,19 @@ it, SAP's formatter:
 
 A project config that changes `abapCleaner.path` or `.profile` is marked ⚠ in the approval dialog: it
 names a program adt+ runs, or what it runs it with.
+
+## Environment
+
+| Variable | Read by | |
+|---|---|---|
+| `ADTPLUS_CONFIG` | CLI, MCP server, daemon | another user config file ([Systems](#systems)) |
+| `ADTPLUS_PROJECT` | CLI, MCP server without roots | folder to look for project configs from ([Project configs](#project-configs)) |
+| `ADTPLUS_DENY` | daemon and clients | commands to refuse ([Deny list](#deny-list)) |
+| `ADTPLUS_READONLY` | daemon and clients | refuse every write ([Read-only mode](#read-only-mode)) |
+| `ADTPLUS_LOG` | daemon | what the call log holds ([Call log](#call-log-on-by-default)) |
+| `XDG_RUNTIME_DIR` | daemon and clients | folder of the daemon socket |
+
+- The daemon's socket is `$XDG_RUNTIME_DIR/adtplus.sock`, else `~/.cache/adtplus/adtplus.sock`.
 
 ## Deny list
 

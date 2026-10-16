@@ -1,11 +1,20 @@
-import { type IRegistry, LanguageVersion, MemoryFile, Registry, Severity } from '@abaplint/core';
+import { type IRegistry, MemoryFile, Registry, Severity } from '@abaplint/core';
 import type { AdtLsClient, ObjectRef } from '@arc-mcp/adt-ls';
 import { federatedResult } from '../core/federated.js';
-import type { Destination } from '../core/destinations.js';
+import { systemLanguageVersion, type Destination } from '../core/destinations.js';
 import { resolveObject } from '../core/resolve.js';
 import { ThrottledError } from '../daemon/ratelimit.js';
 import { isEndMethodLineComment } from '../core/class-regions.js';
-import { abaplintVersion, isDroppedFinding, isErrorKey, stageOneConfig, type RuleSwitches } from '../mirror/lint.js';
+import {
+  abaplintVersion,
+  affLanguageVersion,
+  isDroppedFinding,
+  objectStem,
+  isErrorKey,
+  stageOneConfig,
+  type AffLanguageVersion,
+  type RuleSwitches,
+} from '../mirror/lint.js';
 import { isServiceBinding, syntaxNotes } from './navigate.js';
 import { checksThroughCheckRun, type TextDiagnostic } from './checkrun.js';
 import { lookupPackageChain } from '../core/placement.js';
@@ -253,8 +262,25 @@ export interface AbaplintFinding {
 
 export interface AbaplintResult {
   filename: string;
-  languageVersion: LanguageVersion;
+  /** What abaplint ran with: the object's own. */
+  languageVersion: AffLanguageVersion;
   findings: AbaplintFinding[];
+}
+
+/**
+ * An object's language version: a cloud system's, or read from the AFF `.json` beside its main
+ * file `uri`. Standard where that can't be read, which lints the least strictly.
+ */
+async function objectLanguageVersion(adt: AdtLsClient, destination: Destination, uri: string): Promise<AffLanguageVersion> {
+  const fallback = systemLanguageVersion(destination);
+  if (fallback === 'cloudDevelopment') return fallback;
+  const json = `${uri.slice(0, uri.lastIndexOf('/') + 1)}${objectStem(uri)}.json`;
+  try {
+    return affLanguageVersion(await adt.repository.readFile(json)) ?? fallback;
+  } catch (err) {
+    if (err instanceof ThrottledError) throw err;
+    return fallback;
+  }
 }
 
 /**
@@ -275,10 +301,10 @@ export async function runAbaplint(
   const { uri } = await resolveObject(adt, ref);
   const filename = decodeURIComponent(uri.split('/').pop() ?? ref.name);
   const source = await adt.source.read(ref);
+  const languageVersion = await objectLanguageVersion(adt, destination, uri);
 
-  const languageVersion = abaplintVersion(destination.languageVersion);
   // `mirror check`'s rules and per-type drops, so the two agree on what an error is.
-  const config = stageOneConfig(languageVersion, rules);
+  const config = stageOneConfig(abaplintVersion(languageVersion), rules);
   const registry = new Registry(config).addFile(new MemoryFile(filename, source));
   await registry.parseAsync();
 
@@ -486,9 +512,10 @@ export async function checkSyntaxBatch(
 
 
 /**
- * abaplint over the objects' main sources in one registry, with `runAbaplint`'s
- * rules: with `check_syntax` switched on, a call from one object to another in
- * the batch is checked (a reference outside it is void).
+ * abaplint over the objects' main sources, with `runAbaplint`'s rules, each object at its own
+ * language version: one registry per version, since abaplint takes one per registry. With
+ * `check_syntax` switched on, a call from one object to another of the same version is checked
+ * (a reference outside that is void).
  */
 export async function runAbaplintBatch(
   adt: AdtLsClient,
@@ -496,14 +523,15 @@ export async function runAbaplintBatch(
   refs: ObjectRef[],
   concurrency: number,
   rules?: RuleSwitches,
-): Promise<BatchResult & { languageVersion: LanguageVersion }> {
+): Promise<BatchResult & { languageVersions: Partial<Record<AffLanguageVersion, number>> }> {
   assertBatchSize(refs);
   const failed: BatchResult['failed'] = [];
   const read = await inPool(refs, concurrency, async (ref) => {
     try {
       const uri = await adt.lifecycle.resolveAffUri(ref);
       const filename = decodeURIComponent(uri.split('/').pop() ?? ref.name);
-      return { ref, filename, source: await adt.source.read({ ...ref, uri }) };
+      const [source, languageVersion] = await Promise.all([adt.source.read({ ...ref, uri }), objectLanguageVersion(adt, destination, uri)]);
+      return { ref, filename, source, languageVersion };
     } catch (err) {
       if (err instanceof ThrottledError) throw err;
       failed.push({ object: objectId(ref), message: errorText(err) });
@@ -511,23 +539,28 @@ export async function runAbaplintBatch(
     }
   });
 
-  const languageVersion = abaplintVersion(destination.languageVersion);
-  const registry = new Registry(stageOneConfig(languageVersion, rules));
+  const languageVersions: Partial<Record<AffLanguageVersion, number>> = {};
   const owner = new Map<string, string>();
-  for (const r of read) {
-    if (!r) continue;
-    owner.set(r.filename, objectId(r.ref));
-    registry.addFile(new MemoryFile(r.filename, r.source));
+  const findings: BatchFinding[] = [];
+  for (const version of new Set(read.flatMap((r) => (r ? [r.languageVersion] : [])))) {
+    const registry = new Registry(stageOneConfig(abaplintVersion(version), rules));
+    for (const r of read) {
+      if (!r || r.languageVersion !== version) continue;
+      owner.set(r.filename, objectId(r.ref));
+      registry.addFile(new MemoryFile(r.filename, r.source));
+      languageVersions[version] = (languageVersions[version] ?? 0) + 1;
+    }
+    await registry.parseAsync();
+    findings.push(
+      ...kept(registry).map((issue) => ({
+        object: owner.get(issue.getFilename()) ?? issue.getFilename(),
+        severity: (isErrorKey(issue.getKey()) ? 'error' : 'warning') as BatchSeverity,
+        check: issue.getKey(),
+        message: issue.getMessage(),
+        file: issue.getFilename(),
+        line: issue.getStart().getRow(),
+      })),
+    );
   }
-  await registry.parseAsync();
-
-  const findings = kept(registry).map((issue) => ({
-    object: owner.get(issue.getFilename()) ?? issue.getFilename(),
-    severity: (isErrorKey(issue.getKey()) ? 'error' : 'warning') as BatchSeverity,
-    check: issue.getKey(),
-    message: issue.getMessage(),
-    file: issue.getFilename(),
-    line: issue.getStart().getRow(),
-  }));
-  return { ...summarize(refs.length, findings, failed), languageVersion };
+  return { ...summarize(refs.length, findings, failed), languageVersions };
 }

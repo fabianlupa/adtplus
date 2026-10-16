@@ -318,7 +318,7 @@ describe('mirror check and new for message classes', () => {
   it('flags what the schema allows and push refuses', async () => {
     await mirrored();
     write(MSAG, json({ messages: [['001', 'a'], ['001', 'b']] }));
-    const result = await check({ ...loc(), languageVersion: undefined });
+    const result = await check({ ...loc(), languageVersion: 'standard' });
     expect(result.findings).toContainEqual(expect.objectContaining({ path: MSAG, rule: 'msag_file', severity: 'error' }));
     expect(result.noSchema).toEqual({});
   });

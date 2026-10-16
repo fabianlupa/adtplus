@@ -139,7 +139,7 @@ export function assertTranslationsAllowed(destination: Destination): void {
 
 /**
  * Publish and unpublish are on unless the system's policy sets
- * `allowPublishService: false`.
+ * `allowPublish: false`.
  *
  * It used to be on-prem-only, because cloud un-publish was unproven from adt-ls
  * (M6.0 finding 6). M6.4a proved both directions on `cloud-erp`, so that default no
@@ -152,10 +152,10 @@ export function assertTranslationsAllowed(destination: Destination): void {
  * binding), and `confirm: true` stays as the model-side speed bump (ADR-003).
  */
 export function assertPublishServiceAllowed(destination: Destination): void {
-  if (destination.allowPublishService === false) {
+  if (destination.allowPublish === false) {
     throw new Error(
       `adt+ system "${destination.id}": publish and unpublish are disabled here by ` +
-        `"allowPublishService": false in this system's policy.`,
+        `"allowPublish": false in this system's policy.`,
     );
   }
 }

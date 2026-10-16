@@ -8,7 +8,7 @@ import { createFormObject, gateFormObjects, updateFormObject } from '../../src/c
 import { formType, checkProperties, dataElementCreate, dataElementProperties, dataElementUpdate } from '../../src/capabilities/properties.js';
 import { activateRest } from '../../src/capabilities/rest-activation.js';
 import type { Destination } from '../../src/core/destinations.js';
-import { routedRest } from '../helpers/rest.js';
+import { packageBody, routedRest } from '../helpers/rest.js';
 
 // Trimmed from the live ONPREM GETs of MATNR and ZADTPLUS_DE_PROBE.
 interface Fixture {
@@ -232,6 +232,7 @@ describe('data element REST fallback', () => {
   it('sets label lengths other than the maxima by a PUT after the create, which gives every label its maximum', async () => {
     let current: string | undefined;
     const rest = routedRest(({ method, path, opts }) => {
+      if (path === '/sap/bc/adt/packages/zpkg' && method === 'GET') return { body: packageBody('ZPKG') };
       if (path === '/sap/bc/adt/ddic/dataelements/validation') return { status: 200 };
       if (path === '/sap/bc/adt/ddic/dataelements' && method === 'POST') {
         current = opts.body!.replace(/<dtel:(\w+)FieldLength>\d+</g, (_, k: string) => `<dtel:${k}FieldLength>${{ short: 10, medium: 20, long: 40, heading: 55 }[k]}<`);
@@ -246,6 +247,7 @@ describe('data element REST fallback', () => {
     const res = await createFormObject(DATA_ELEMENT, rest, onprem, { name: 'ZADTPLUS_DE', packageName: 'ZPKG', description: 'Demo', content, transport: 'DEVK900001' }, noChain);
     expect(res.object.labels.medium).toEqual({ text: 'Medium', length: 15 });
     expect(rest.calls.map((c) => `${c.method} ${c.opts.query?._action ?? ''}`)).toEqual([
+      'GET ',
       'POST ',
       'POST ',
       'GET ',

@@ -330,13 +330,13 @@ describe('publishService', () => {
   });
 
   // The gate stopped depending on `kind` once M6.4a proved the cloud toggle both
-  // ways: only an explicit `allowPublishService: false` refuses now.
-  it('gates by policy only: refused when allowPublishService is false, on either kind', async () => {
+  // ways: only an explicit `allowPublish: false` refuses now.
+  it('gates by policy only: refused when allowPublish is false, on either kind', async () => {
     for (const destination of [onprem, cloud]) {
       const adt = publishAdt(async () => services(false));
       await expect(
-        object.publishService(adt, { ...destination, allowPublishService: false }, { ref: SRVB, target: 'PUBLISH', confirm: true }),
-      ).rejects.toThrow(/publish and unpublish are disabled here by "allowPublishService": false/);
+        object.publishService(adt, { ...destination, allowPublish: false }, { ref: SRVB, target: 'PUBLISH', confirm: true }),
+      ).rejects.toThrow(/publish and unpublish are disabled here by "allowPublish": false/);
       expect(adt.services.publishServiceBinding).not.toHaveBeenCalled();
     }
   });
@@ -461,7 +461,7 @@ describe('publishService', () => {
     it('sends once and explains the cloud refusal when no budget is given', async () => {
       const adt = publishAdt(async () => services(true), vi.fn(async () => REFUSED), unpublishDetails);
       await expect(
-        object.publishService(adt, { ...cloud, allowPublishService: true }, { ref: SRVB, target: 'UNPUBLISH', confirm: true }),
+        object.publishService(adt, { ...cloud, allowPublish: true }, { ref: SRVB, target: 'UNPUBLISH', confirm: true }),
       ).rejects.toThrow(/refused it instantly.*Nothing was executed.*--settle-timeout/s);
       expect(adt.services.publishServiceBinding).toHaveBeenCalledTimes(1);
     });

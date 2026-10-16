@@ -28,10 +28,10 @@ const systemFields = {
   adtlsDestinationId: z
     .string()
     .describe('id in ~/.adtls/destinations.json to take systemUrl from, when its protocol is "http".'),
-  ssoUrl: z
+  reentranceUrl: z
     .string()
     .url()
-    .describe("Reentrance (SSO) host for interactive systems' REST logon. Defaults to systemUrl without `-api`."),
+    .describe("Host of the reentrance ticket logon (SSO) for an interactive system's REST session. Default: systemUrl without `-api`."),
   user: z.string().describe('Logon user for basic auth.'),
   language: z
     .string()
@@ -45,12 +45,6 @@ const systemFields = {
     .describe(
       'PEM files to trust in addition to the system CAs. `~/` and relative paths resolve against the folder holding the file (for a project config, the folder holding `.adtplus/`). Replaces an inherited list.',
     ),
-  defaultSoftwareComponent: z
-    .string()
-    .describe('Software component for new packages when the caller passes none and the superpackage has none.'),
-  languageVersion: z
-    .enum(['standard', 'keyUser', 'cloudDevelopment'])
-    .describe('ABAP language version every new package on this system must get; enforced on package create.'),
   writeAllowlist: z
     .array(
       z.union([
@@ -61,7 +55,7 @@ const systemFields = {
     .describe(
       'Packages adt+ may write to (ADR-003). A string covers that package only; {package, subpackages: true} covers its whole subtree. Replaces an inherited list.',
     ),
-  allowPublishService: z
+  allowPublish: z
     .boolean()
     .describe('false turns off publishing/unpublishing service bindings on this system. Unset = allowed.'),
   allowRun: z
@@ -80,6 +74,9 @@ const systemFields = {
     .describe(
       'true enables translations through the unreleased OData UI service UI_SMTR_PROJECT on this system: object translations and the TRPR type (ADR-019). Off unless set.',
     ),
+  allowGitRemote: z
+    .boolean()
+    .describe('true lets the git remote helper use this system: `git clone adtplus::<system>/…`, fetch and push (ADR-011). Off unless set.'),
   rateLimit: z
     .object({
       concurrency: z.number().int().positive().optional().describe('Calls running at once. Default 4.'),
@@ -122,13 +119,6 @@ const systemFields = {
         .array(z.string().regex(/^\/[^/]+\/$/, 'a namespace like "/NSPC/"'))
         .optional()
         .describe('Customer namespaces whose packages may be mirrored, besides Z, Y and $ (e.g. ["/NSPC/"]). Replaces an inherited list.'),
-      git: z
-        .object({
-          enabled: z.boolean().optional().describe('true lets `git clone adtplus::<system>/…` use this system (ADR-011). Off unless set.'),
-        })
-        .strict()
-        .optional()
-        .describe('The git remote helper (ADR-011).'),
     })
     .strict()
     .describe('Mirror mode (ADR-007): pulling packages as AFF files into a local folder. Merged key by key with an inherited one (ADR-006).'),
@@ -331,7 +321,7 @@ export async function readConfigLayers(opts: LoadConfigOptions = {}): Promise<Co
   for (const projectPath of [...projectPaths].reverse()) {
     const layer = await readLayer(projectPath, 'project');
     if (!layer) continue;
-    layer.trusted = isTrusted(trust, layer.path, layer.sha256, setsObjectField(layer));
+    layer.trusted = isTrusted(trust, layer.path, layer.sha256);
     layers.push(layer);
   }
   return layers;
@@ -340,15 +330,10 @@ export async function readConfigLayers(opts: LoadConfigOptions = {}): Promise<Co
 const isPlainObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
-/** Whether a layer sets an object field, whose meaning changed when objects began to merge key by key (ADR-006). */
-function setsObjectField(layer: ConfigLayer): boolean {
-  return Object.values(layer.systems).some((entry) => Object.values(entry).some(isPlainObject));
-}
-
 /**
  * `over`'s keys onto `target`, an object in both merged key by key, anything else (a list
  * included) replaced (ADR-006). Never changes a layer's own objects: a merged object is a copy.
- * `set` hears the dotted path of each value taken, `mirror.git.enabled`.
+ * `set` hears the dotted path of each value taken, `mirror.maxObjects`.
  */
 function mergeKeys(target: Record<string, unknown>, over: Record<string, unknown>, set: (path: string) => void, prefix = ''): void {
   for (const [key, value] of Object.entries(over)) {
@@ -443,6 +428,14 @@ export async function loadConfig(opts: LoadConfigOptions = {}): Promise<LoadedCo
     }
   }
   return { destinations, sources, layers, refused };
+}
+
+/**
+ * The language version of an object that names none: a cloud system has ABAP for Cloud
+ * Development only; elsewhere standard ABAP.
+ */
+export function systemLanguageVersion(destination: Pick<Destination, 'kind'>): 'cloudDevelopment' | 'standard' {
+  return destination.kind === 'cloud' ? 'cloudDevelopment' : 'standard';
 }
 
 /** The resolved systems of `loadConfig`, for callers that need nothing else. */

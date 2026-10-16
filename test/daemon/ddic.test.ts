@@ -24,7 +24,6 @@ const onprem: Destination = {
   systemUrl: 'https://onprem.example',
   extraCaCerts: [],
   user: 'DEVELOPER',
-  languageVersion: 'standard',
   writeAllowlist: ['ZPKG'],
 };
 

@@ -494,7 +494,7 @@ describe('daemon M6 dispatch', () => {
     const sessionManager = fakeSessionManager({ get: vi.fn(async () => ({ adt, info: {} })) });
     const daemon = createDaemonServer({
       sessionManager,
-      destinations: { onprem, 'cloud-erp': { ...cloud, allowPublishService: false } },
+      destinations: { onprem, 'cloud-erp': { ...cloud, allowPublish: false } },
       socketPath,
     });
     await waitListening(daemon);
@@ -508,7 +508,7 @@ describe('daemon M6 dispatch', () => {
 
     expect(res).toEqual({
       ok: false,
-      error: expect.stringMatching(/publish and unpublish are disabled here by "allowPublishService": false/),
+      error: expect.stringMatching(/publish and unpublish are disabled here by "allowPublish": false/),
     });
     expect(sessionManager.get).not.toHaveBeenCalled();
     expect(adt.lifecycle.resolveAffUri).not.toHaveBeenCalled();

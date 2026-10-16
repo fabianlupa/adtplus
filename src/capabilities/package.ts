@@ -183,6 +183,25 @@ export async function validatePackage(rest: RawAdtClient, input: ValidatePackage
   return { severity: field('SEVERITY'), shortText: field('SHORT_TEXT'), longText: field('LONG_TEXT') };
 }
 
+/**
+ * The language version (AFF name) a new object in `pkg` gets: on a cloud system ABAP for Cloud
+ * Development, the only one there; elsewhere its package's default (AFF's
+ * `defaultAbapLanguageVersion`), from `known` when the caller has read the package already.
+ */
+export async function newObjectLanguageVersion(
+  rest: RawAdtClient,
+  destination: Destination,
+  pkg: string,
+  known?: PackageDefinition,
+): Promise<LanguageVersion> {
+  if (destination.kind === 'cloud') return 'cloudDevelopment';
+  const definition = known ?? (await readPackageDefinition(rest, pkg));
+  if (!definition) throw new Error(`package "${pkg}" does not exist`);
+  const version = languageVersionName(definition.languageVersion);
+  if (version.startsWith('unknown(')) throw new Error(`package ${pkg} has language version code "${definition.languageVersion}", which adt+ doesn't know`);
+  return version as LanguageVersion;
+}
+
 function isValidationFailure(v: PackageValidation): boolean {
   return !['OK', 'INFO', 'WARNING', ''].includes(v.severity.toUpperCase());
 }
@@ -205,11 +224,30 @@ interface ResolvedCreate {
 }
 
 /**
+ * A new package's language version as code, before any call: on a cloud system ABAP for Cloud
+ * Development, the only one there; elsewhere the call's, undefined for none (the superpackage's
+ * then). A package's version is only the default of the objects created in it; what its software
+ * component allows, SAP decides on create.
+ */
+function requestedPackageLanguageVersion(destination: Destination, requested: string | undefined): string | undefined {
+  if (requested !== undefined && !Object.hasOwn(LANGUAGE_VERSION_CODES, requested)) {
+    throw new Error(`unknown ABAP language version "${requested}"; use one of ${Object.keys(LANGUAGE_VERSION_CODES).join(', ')}`);
+  }
+  if (destination.kind === 'cloud') {
+    if (requested && requested !== 'cloudDevelopment') {
+      throw new Error(`adt+ system "${destination.id}" is a cloud system: new packages use language version "cloudDevelopment", not "${requested}"`);
+    }
+    return LANGUAGE_VERSION_CODES.cloudDevelopment;
+  }
+  return requested ? LANGUAGE_VERSION_CODES[requested as LanguageVersion] : undefined;
+}
+
+/**
  * Work out the full definition a create would send, and SAP's verdict on
- * it, without changing anything. Defaults: software component from the
- * input, then the super package, then system policy; transport layer and
- * change recording from the super package. The language version always
- * comes from system policy — a conflicting request is refused.
+ * it, without changing anything. Defaults from the super package: software
+ * component, transport layer, change recording and, off a cloud system, the
+ * language version. A software component neither names is refused: the
+ * user picks it.
  */
 async function resolveCreate(
   rest: RawAdtClient,
@@ -221,22 +259,21 @@ async function resolveCreate(
   const superPackageName = input.superPackage.toUpperCase();
   // A new package lands in its superpackage, so that is what the allowlist decides.
   await assertPackageWritable(destination, superPackageName, { lookupChain });
+  const requestedVersion = requestedPackageLanguageVersion(destination, input.languageVersion);
 
-  const required = destination.languageVersion;
-  if (!required) {
-    throw new Error(`adt+ system "${destination.id}": set "languageVersion" in systems.json before creating packages`);
-  }
-  if (input.languageVersion && input.languageVersion !== required) {
-    throw new Error(
-      `adt+ system "${destination.id}": new packages must use language version "${required}", not "${input.languageVersion}"`,
-    );
-  }
   // The logged-on user, as ADT's new-package wizard proposes (ADR-018; AFF has no such field).
   const responsible = await ownUser(rest, destination);
   if (!responsible) throw new Error(`adt+ system "${destination.id}": the logon user is unknown here, so a new package has no responsible user`);
 
   const superPackage = await readPackageDefinition(rest, superPackageName);
   if (!superPackage) throw new Error(`super package "${superPackageName}" does not exist`);
+  // Without the call's, the superpackage's: SAP can refuse a package in another component (TR458).
+  const softwareComponent = input.softwareComponent || superPackage.softwareComponent;
+  if (!softwareComponent) {
+    throw new Error(
+      `package ${name}: super package ${superPackageName} has no software component, so pass softwareComponent; ask the user which one`,
+    );
+  }
 
   const definition: PackageDefinition = {
     name,
@@ -245,12 +282,10 @@ async function resolveCreate(
     responsible,
     packageType: 'development',
     recordChanges: input.recordChanges ?? superPackage.recordChanges,
-    languageVersion: LANGUAGE_VERSION_CODES[required],
+    languageVersion: requestedVersion ?? superPackage.languageVersion,
     superPackage: superPackageName,
     applicationComponent: input.applicationComponent ?? '',
-    // The superpackage's component first: SAP can refuse a package in another component (TR458).
-    softwareComponent:
-      input.softwareComponent || superPackage.softwareComponent || destination.defaultSoftwareComponent || '',
+    softwareComponent,
     transportLayer: input.transportLayer ?? superPackage.transportLayer,
   };
   const validation = await validatePackage(rest, definition);

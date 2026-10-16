@@ -200,8 +200,8 @@ npm install && npm run build && npm link   # puts adtplus and git-remote-adtplus
 2. Register the MCP server (stdio, `node <repo>/dist/mcp/server.js`) in your client, with an
    approval per tool: [clients.md](docs/clients.md).
 3. Connect: `adtplus system connect --system <id>`.
-4. For git, opt the system in with `"mirror": { "git": { "enabled": true } }`
-   ([configuration.md](docs/configuration.md#mirror)). Git runs the helper with your shell's
+4. For git, opt the system in with `"allowGitRemote": true`
+   ([configuration.md](docs/configuration.md#git-remote-off-by-default)). Git runs the helper with your shell's
    environment, so set there what the CLI needs too (e.g. `NODE_EXTRA_CA_CERTS`).
 
 ## Docs
