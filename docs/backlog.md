@@ -136,6 +136,14 @@ Not planned (same review): completion, SQL/profiler/auth traces, `odata_perf`, `
   `source.read({version: 'active'})` on an object without an active version throws the generic
   "did not switch … to the active version"; adt+ matches that text. A typed error, or a check
   before the toggle, would be sturdier. Not yet seen on `onprem`.
+- **Upstream to abaplint: several language versions in one run** (user, 2026-10-16; ADR-012):
+  abaplint takes one ABAP language version per registry (`Config` → `getLanguageVersion()`), not
+  per object. A package or mirror folder can hold objects of several versions (on-premise, a
+  package's version is only the default), so `mirror check` and `quality abaplint` lint one
+  registry per version, and a reference between versions is void. A folder of one version is
+  still one run; a mixed one loses what checks across objects see (`check_syntax` on a call into
+  the other version, rules over the whole registry). Propose reading each object's version from its
+  AFF `.json` (`header.abapLanguageVersion`) or abapGit XML upstream.
 - **Upstream to abaplint: MSAG from AFF** (2026-10-10; ADR-012): `msag_consistency` reads neither
   the name nor the messages from a `.msag.json` ("Message class name "undefined""), so `mirror
   check` drops it and checks the file itself (`msag_file`). Propose reading AFF's `msag-v1`.
@@ -153,6 +161,12 @@ Not planned (same review): completion, SQL/profiler/auth traces, `odata_perf`, `
   `core/class-regions.ts` and the filter `isEndMethodLineComment` in `mirror/lint.ts`.
 
 ## Objects, navigation, transports, quality
+
+- **Language version on cloud systems: fixed or derived?** (user, 2026-10-16): adt+ fixes
+  `cloudDevelopment` for every new package and object on a `kind: cloud` system, and uses it for
+  abaplint there without reading the object. Check whether the on-premise logic (the call's
+  version, else the superpackage's or package's default, else the object's `.json`) works there
+  too and would always yield `cloudDevelopment`; then one rule serves both kinds.
 
 - **Catalog types, open after the `cloud-erp` and `onprem` probes** (2026-10-13;
   the probe objects stay in `cloud-erp`'s `ZADTPLUS_OBJTYPES`, `onprem`'s holds the two fixtures only):
@@ -323,7 +337,8 @@ Not planned (same review): completion, SQL/profiler/auth traces, `odata_perf`, `
   4. message classes, leftovers: the user accepts ADR-014 (proposed); messages removed from a
      `.msag.json` stay reported (`leftOut`) until "Deletions in mirror mode" below decides; the
      empty throwaway package `ZADTPLUS_MSAG_MIR` on `onprem` refuses its delete ("still contains
-     development objects", nothing listed); the git helper's fetch of a message class live (a
+     development objects", nothing listed); so does `ZADTPLUS_LV` (2026-10-16), which held a message
+     class, a domain and a class, all deleted: the message class's REST delete is the suspect; the git helper's fetch of a message class live (a
      clone, not run in the session that built it). The git helper's history can't show message
      changes per request: no version feed for message classes (404);
   5. outside this repo: agents write through `updateSource`/mirror, not `abap:` VFS patches
@@ -402,7 +417,7 @@ Not planned (same review): completion, SQL/profiler/auth traces, `odata_perf`, `
   question first, in all three refac runs.
 - **Mirror default backend: git?** (user, 2026-10-13; evaluate, don't build yet). Today a
   mirror is AFF files on disk, and git is opt-in: the git remote helper needs
-  `mirror.git.enabled` per system, and a mirror's own history is only a local aid (item above).
+  `allowGitRemote` per system, and a mirror's own history is only a local aid (item above).
   Evaluate making git the default backend for mirrors: what the default stores (the mirror as a
   repository, the manifest, the shadow mirror under `$GIT_DIR`), how it treats a project that is
   already a repository (open point above), and what changes for the `abap-mirror` skill's commit

@@ -72,7 +72,11 @@ adt-ls version change.
 
 ## check
 
-No SAP call; `system` gives the language version. `ok` = no errors (CLI exit code 1 otherwise).
+No SAP call. abaplint lints each object at the language version its `.json` names
+(`header.abapLanguageVersion`), one without at the system's (`cloud`: `cloudDevelopment`, `onprem`:
+standard); abaplint takes one version per run, so each version is a run of its own and a reference
+into another version is void. The result counts objects per version (`languageVersions`). `ok` = no
+errors (CLI exit code 1 otherwise).
 
 **What it runs on every file under `src/`:**
 
@@ -224,7 +228,8 @@ is never sent: `failed`, until a pull leaves the system's version in a `.remote`
   messages, the logon language as original language).
 - In the package's folder (default: the mirror's root package; a subpackage only when the manifest
   knows its folder).
-- `.json` as adt-ls serves a fresh object, `abapLanguageVersion` from the system when not standard.
+- `.json` as adt-ls serves a fresh object: `abapLanguageVersion` `cloudDevelopment` on a `cloud`
+  system, none on `onprem` (the create gives the package's default; the push's read-back writes it).
 - A BDEF is named after its root entity (ADR-007).
 - Customer names only; refuses an existing object or file.
 - Not added to the manifest: `status` shows the files as added, `push` creates the object.

@@ -49,8 +49,6 @@ const onprem: Destination = {
   systemUrl: 'https://onprem.example',
   user: 'DEVELOPER',
   extraCaCerts: [],
-  defaultSoftwareComponent: 'HOME',
-  languageVersion: 'standard',
   writeAllowlist: ['ZADTPLUS_TEST'],
 };
 
@@ -62,8 +60,6 @@ const cloudErp: Destination = {
   systemUrl: 'https://my1-api.example',
   user: 'CB9980000000',
   extraCaCerts: [],
-  defaultSoftwareComponent: 'ZLOCAL',
-  languageVersion: 'cloudDevelopment',
   writeAllowlist: ['ZADTPLUS_TEST'],
 };
 
@@ -196,7 +192,7 @@ describe('package validate/create (REST fallback)', () => {
     expect(res.transport).toBeNull();
   });
 
-  it('takes the super package\'s software component before the system default', async () => {
+  it("takes the call's software component, else the super package's, else refuses and has the user asked", async () => {
     const routes = onpremRoutes();
     const superIn = (softwareComponent: string): Route => (call) =>
       call.method === 'GET' && call.path === '/sap/bc/adt/packages/zadtplus_test'
@@ -205,16 +201,41 @@ describe('package validate/create (REST fallback)', () => {
 
     const partner = await validateCreatePackage(routedRest(superIn('ZPARTNER')), cloudErp, input);
     expect(partner.definition.softwareComponent).toBe('ZPARTNER');
-    const none = await validateCreatePackage(routedRest(superIn('')), cloudErp, input);
-    expect(none.definition.softwareComponent).toBe('ZLOCAL');
     const asked = await validateCreatePackage(routedRest(superIn('ZPARTNER')), cloudErp, { ...input, softwareComponent: 'ZOTHER' });
     expect(asked.definition.softwareComponent).toBe('ZOTHER');
+    const given = await validateCreatePackage(routedRest(superIn('')), cloudErp, { ...input, softwareComponent: 'ZLOCAL' });
+    expect(given.definition.softwareComponent).toBe('ZLOCAL');
+    const rest = routedRest(superIn(''));
+    await expect(validateCreatePackage(rest, cloudErp, input)).rejects.toThrow(
+      /super package ZADTPLUS_TEST has no software component, so pass softwareComponent; ask the user which one/,
+    );
+    expect(rest.calls.some((c) => c.path.endsWith('/validation'))).toBe(false);
   });
 
-  it('refuses a language version that conflicts with system policy', async () => {
+  it("on premise takes the call's language version, else the super package's", async () => {
+    const routes = onpremRoutes();
+    const rest = () =>
+      routedRest((call) =>
+        call.method === 'GET' && call.path === '/sap/bc/adt/packages/zadtplus_test'
+          ? { body: packageXml({ name: 'ZADTPLUS_TEST', languageVersion: '5' }) }
+          : routes(call),
+      );
+    expect((await validateCreatePackage(rest(), onprem, input)).definition.languageVersion).toBe('5');
+    expect((await validateCreatePackage(rest(), onprem, { ...input, languageVersion: 'standard' })).definition.languageVersion).toBe('');
+  });
+
+  it('refuses another language version than cloudDevelopment on a cloud system, before any call', async () => {
     const rest = routedRest(onpremRoutes());
     await expect(createPackage(rest, cloudErp, { ...input, languageVersion: 'standard' })).rejects.toThrow(
-      /must use language version "cloudDevelopment"/,
+      /is a cloud system: new packages use language version "cloudDevelopment", not "standard"/,
+    );
+    expect(rest.calls).toHaveLength(0);
+  });
+
+  it('refuses a language version adt+ does not know, before any call', async () => {
+    const rest = routedRest(onpremRoutes());
+    await expect(createPackage(rest, onprem, { ...input, languageVersion: 'cloud' as never })).rejects.toThrow(
+      /unknown ABAP language version "cloud"; use one of standard, keyUser, cloudDevelopment/,
     );
     expect(rest.calls).toHaveLength(0);
   });

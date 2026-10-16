@@ -194,7 +194,7 @@ const DOMAIN_APPENDS = 'fixed value appends are objects of their own: adt+ neith
 /** A create's `properties` for a domain: `format` at least. Name, package and description come as the create's own parameters. */
 export function domainCreate(properties: Json | undefined): DomainContent {
   if (!properties) throw new Error('a domain create needs "properties" with format.dataType and format.length');
-  refuseKeys(properties, ['formatVersion', 'header'], '', 'a create takes the name, "package" and "description" as its own parameters; the language and ABAP language version are the system\'s');
+  refuseKeys(properties, ['formatVersion', 'header'], '', 'a create takes the name, "package" and "description" as its own parameters; the language is the logon language, the ABAP language version the package\'s default');
   refuseKeys(properties, ['fixedValueAppends'], '', DOMAIN_APPENDS);
   const format = properties.format as Json | undefined;
   if (format?.dataType === undefined || format.length === undefined) throw new Error('a domain create needs format.dataType and format.length');
@@ -338,7 +338,7 @@ function applyDataElementProperties<T extends DataElementFields>(base: T, proper
  */
 export function dataElementCreate(properties: Json | undefined): DataElementContent {
   if (!properties) throw new Error('a data element create needs "properties" with dataTypeInformation.category and its type');
-  refuseKeys(properties, ['formatVersion', 'header'], '', 'a create takes the name, "package" and "description" as its own parameters; the language and ABAP language version are the system\'s');
+  refuseKeys(properties, ['formatVersion', 'header'], '', 'a create takes the name, "package" and "description" as its own parameters; the language is the logon language, the ABAP language version the package\'s default');
   if ((properties.dataTypeInformation as Json | undefined)?.category === undefined) {
     throw new Error('a data element create needs dataTypeInformation.category: domain (with typeName), predefinedType (with predefinedType.dataType), or a reference');
   }

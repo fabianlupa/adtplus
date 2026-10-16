@@ -40,9 +40,10 @@ function classXml(
 }
 
 /** Just what `readPackageDefinition` needs. */
-const packageXml = (recordChanges: boolean) =>
+/** `languageVersion` is SAP's code: '' standard, '5' ABAP for Cloud Development. */
+const packageXml = (recordChanges: boolean, languageVersion = '') =>
   '<pak:package adtcore:name="ZPKG" xmlns:pak="http://www.sap.com/adt/packages" xmlns:adtcore="http://www.sap.com/adt/core">' +
-  `<pak:attributes pak:packageType="development" pak:recordChanges="${recordChanges}" pak:languageVersion=""/></pak:package>`;
+  `<pak:attributes pak:packageType="development" pak:recordChanges="${recordChanges}" pak:languageVersion="${languageVersion}"/></pak:package>`;
 
 /** SAP's lock on a class that no request holds (ONPREM, ZCL_ADTPLUS_DUMMY). */
 const LOCK_NO_REQUEST = '<asx:abap><asx:values><DATA><LOCK_HANDLE>H1</LOCK_HANDLE><CORRNR/><CORRUSER/></DATA></asx:values></asx:abap>';
@@ -146,9 +147,10 @@ describe('readMessages', () => {
 });
 
 describe('createMessageClass', () => {
-  const created = () =>
+  const created = (languageVersion = '') =>
     routedRest(({ method, path, opts }) => {
       if (path.endsWith('/validation')) return { status: 200 };
+      if (method === 'GET' && path === '/sap/bc/adt/packages/zpkg') return { body: packageXml(true, languageVersion) };
       if (method === 'POST' && path === '/sap/bc/adt/messageclass') return { status: 201 };
       if (method === 'GET' && path === URI && opts) return { body: classXml([]) };
       return undefined;
@@ -158,22 +160,28 @@ describe('createMessageClass', () => {
     const rest = created();
     const res = await createMessageClass(rest, onprem, { name: 'zadtplus_msg', packageName: 'zpkg', description: 'Demo', transport: 'DEVK900001' }, noChain);
     expect(res).toMatchObject({ messageClass: { name: 'ZADTPLUS_MSG', package: 'ZPKG' }, transport: 'DEVK900001', via: 'rest-fallback' });
-    const [validation, post] = rest.calls;
+    const [validation, , post] = rest.calls;
     expect(validation!.opts.query).toEqual({ objname: 'ZADTPLUS_MSG', description: 'Demo', packagename: 'ZPKG' });
     expect(post!.opts.query).toEqual({ corrNr: 'DEVK900001' });
     expect(post!.opts.body).toContain('adtcore:masterLanguage="EN"');
     expect(post!.opts.body).not.toContain('abapLanguageVersion');
   });
 
-  it('sends a non-standard language version of the system', async () => {
-    const rest = created();
-    await createMessageClass(
-      rest,
-      { ...onprem, languageVersion: 'cloudDevelopment' },
-      { name: 'ZADTPLUS_MSG', packageName: 'ZPKG', description: 'Demo', transport: 'DEVK900001' },
-      noChain,
+  it("sends its package's language version when it isn't standard", async () => {
+    const rest = created('5');
+    await createMessageClass(rest, onprem, { name: 'ZADTPLUS_MSG', packageName: 'ZPKG', description: 'Demo', transport: 'DEVK900001' }, noChain);
+    expect(rest.calls.find((c) => c.method === 'POST' && !c.path.endsWith('/validation'))!.opts.body).toContain(
+      'adtcore:abapLanguageVersion="cloudDevelopment"',
     );
-    expect(rest.calls[1]!.opts.body).toContain('adtcore:abapLanguageVersion="cloudDevelopment"');
+  });
+
+  it('sends cloudDevelopment on a cloud system without reading the package', async () => {
+    const rest = created();
+    await createMessageClass(rest, { ...onprem, kind: 'cloud' }, { name: 'ZADTPLUS_MSG', packageName: 'ZPKG', description: 'Demo', transport: 'DEVK900001' }, noChain);
+    expect(rest.calls.some((c) => c.path === '/sap/bc/adt/packages/zpkg')).toBe(false);
+    expect(rest.calls.find((c) => c.method === 'POST' && !c.path.endsWith('/validation'))!.opts.body).toContain(
+      'adtcore:abapLanguageVersion="cloudDevelopment"',
+    );
   });
 
   it("stops at SAP's validation, naming its reason", async () => {
@@ -206,6 +214,8 @@ describe('createMessageClass', () => {
     const res = await createMessageClass(rest, onprem, { name: 'ZADTPLUS_MSG', packageName: 'ZPKG', description: 'Demo' }, noChain);
     expect(res).toMatchObject({ transport: null });
     expect(rest.calls.find((c) => c.method === 'POST' && c.path === '/sap/bc/adt/messageclass')!.opts.query).toEqual({ corrNr: '' });
+    // One package read serves the request rule and the language version.
+    expect(rest.calls.filter((c) => c.path === '/sap/bc/adt/packages/zpkg')).toHaveLength(1);
   });
 
   it('refuses a package outside the allowlist before any request', async () => {

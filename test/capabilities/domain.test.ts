@@ -4,7 +4,7 @@ import { createFormObject, deleteFormObject, gateFormObjects, updateFormObject }
 import { formType, domainCreate, domainProperties, domainUpdate } from '../../src/capabilities/properties.js';
 import { activateRest, parseActivationXml } from '../../src/capabilities/rest-activation.js';
 import type { Destination } from '../../src/core/destinations.js';
-import { routedRest } from '../helpers/rest.js';
+import { packageBody, routedRest } from '../helpers/rest.js';
 
 // Trimmed from the live ONPREM GET of ZADTPLUS_DD_PROBE.
 function domainXml(o: Partial<Domain> & { appendOf?: string } = {}): string {
@@ -47,9 +47,10 @@ const URI = '/sap/bc/adt/ddic/domains/zadtplus_dom';
 const LOCK = '<asx:abap><asx:values><DATA><LOCK_HANDLE>H1</LOCK_HANDLE><CORRNR>DEVK900001</CORRNR></DATA></asx:values></asx:abap>';
 
 /** A domain that reads as `before` until a PUT, then as what the PUT sent (SAP stores what it gets); a DELETE removes it. */
-function domainOnSystem(before: string | undefined) {
+function domainOnSystem(before: string | undefined, packageLanguageVersion = '') {
   let current = before;
   return routedRest(({ method, path, opts }) => {
+    if (path === '/sap/bc/adt/packages/zpkg' && method === 'GET') return { body: packageBody('ZPKG', { languageVersion: packageLanguageVersion }) };
     if (path === URI && method === 'GET') return current ? { body: current } : { status: 404 };
     if (path === URI && method === 'POST' && opts.query?._action === 'LOCK') return { body: LOCK };
     if (path === URI && method === 'POST' && opts.query?._action === 'UNLOCK') return { status: 200 };
@@ -224,6 +225,19 @@ describe('domain REST fallback', () => {
     const post = rest.calls.find((c) => c.method === 'POST' && c.path === '/sap/bc/adt/ddic/domains')!;
     expect(post.opts.query).toEqual({ corrNr: 'DEVK900001' });
     expect(post.opts.body).toContain('adtcore:masterLanguage="EN"');
+  });
+
+  it("gives a new object its package's default language version, on a cloud system cloudDevelopment", async () => {
+    const content = domainCreate({ format: { dataType: 'CHAR', length: 2 } });
+    const input = { name: 'ZADTPLUS_DOM', packageName: 'ZPKG', description: 'Demo', content, transport: 'DEVK900001' };
+    const post = (rest: ReturnType<typeof domainOnSystem>) => rest.calls.find((c) => c.method === 'POST' && c.path === '/sap/bc/adt/ddic/domains')!;
+    const inCloudPackage = domainOnSystem(undefined, '5');
+    await createFormObject(DOMAIN, inCloudPackage, onprem, input, noChain);
+    expect(post(inCloudPackage).opts.body).toContain('adtcore:abapLanguageVersion="cloudDevelopment"');
+    const onCloud = domainOnSystem(undefined);
+    await createFormObject(DOMAIN, onCloud, { ...onprem, kind: 'cloud' }, input, noChain);
+    expect(post(onCloud).opts.body).toContain('adtcore:abapLanguageVersion="cloudDevelopment"');
+    expect(onCloud.calls.some((c) => c.path === '/sap/bc/adt/packages/zpkg')).toBe(false);
   });
 
   it('refuses a create outside the allowlist before any call', async () => {

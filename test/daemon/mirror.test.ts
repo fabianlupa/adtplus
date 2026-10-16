@@ -23,7 +23,6 @@ const onprem: Destination = {
   systemUrl: 'https://onprem.example',
   extraCaCerts: [],
   writeAllowlist: [],
-  languageVersion: 'cloudDevelopment',
   mirror: { maxObjects: 10 },
 };
 
@@ -84,24 +83,26 @@ describe('mirror commands in the daemon', () => {
     }
   });
 
-  it('check and new run on a read-only daemon, with the system\'s language version and no SAP call', async () => {
-    const sys = fakeSystem(PACKAGE);
-    const daemon = daemonWith(sys, true);
-    const location = { root: path.join(ws, 'm'), workspaceFolders: [ws] };
-    try {
-      mkdirSync(ws);
-      await daemon.handleRequest({ cmd: 'mirror.init', system: 'onprem', package: 'ZADTPLUS_A', ...location });
-      const created = await daemon.handleRequest({ cmd: 'mirror.new', system: 'onprem', type: 'CLAS', name: 'ZCL_ADTPLUS_NEW', ...location });
-      expect(created).toMatchObject({ ok: true, result: { object: 'CLAS ZCL_ADTPLUS_NEW', files: ['src/zadtplus_a/zcl_adtplus_new.clas.abap', 'src/zadtplus_a/zcl_adtplus_new.clas.json'] } });
-      expect(JSON.parse(readFileSync(path.join(ws, 'm', 'src', 'zadtplus_a', 'zcl_adtplus_new.clas.json'), 'utf8')).header.abapLanguageVersion).toBe('cloudDevelopment');
-      const calls = vi.mocked(sys.adt.repository.readDirectory).mock.calls.length;
-      const checked = await daemon.handleRequest({ cmd: 'mirror.check', system: 'onprem', ...location });
-      expect(checked).toMatchObject({ ok: true, result: { ok: true, languageVersion: 'cloud', files: 2, objects: 1 } });
-      expect(vi.mocked(sys.adt.repository.readDirectory).mock.calls.length).toBe(calls);
-    } finally {
-      await daemon.close();
-    }
-  });
+  for (const [kind, version] of [['onprem', undefined], ['cloud', 'cloudDevelopment']] as const) {
+    it(`check and new run on a read-only daemon, with the language version of a ${kind} system and no SAP call`, async () => {
+      const sys = fakeSystem(PACKAGE);
+      const daemon = daemonWith(sys, true, { destination: { kind } });
+      const location = { root: path.join(ws, 'm'), workspaceFolders: [ws] };
+      try {
+        mkdirSync(ws);
+        await daemon.handleRequest({ cmd: 'mirror.init', system: 'onprem', package: 'ZADTPLUS_A', ...location });
+        const created = await daemon.handleRequest({ cmd: 'mirror.new', system: 'onprem', type: 'CLAS', name: 'ZCL_ADTPLUS_NEW', ...location });
+        expect(created).toMatchObject({ ok: true, result: { object: 'CLAS ZCL_ADTPLUS_NEW', files: ['src/zadtplus_a/zcl_adtplus_new.clas.abap', 'src/zadtplus_a/zcl_adtplus_new.clas.json'] } });
+        expect(JSON.parse(readFileSync(path.join(ws, 'm', 'src', 'zadtplus_a', 'zcl_adtplus_new.clas.json'), 'utf8')).header.abapLanguageVersion).toBe(version);
+        const calls = vi.mocked(sys.adt.repository.readDirectory).mock.calls.length;
+        const checked = await daemon.handleRequest({ cmd: 'mirror.check', system: 'onprem', ...location });
+        expect(checked).toMatchObject({ ok: true, result: { ok: true, languageVersions: { [version ?? 'standard']: 1 }, files: 2, objects: 1 } });
+        expect(vi.mocked(sys.adt.repository.readDirectory).mock.calls.length).toBe(calls);
+      } finally {
+        await daemon.close();
+      }
+    });
+  }
 
   it('takes the ceiling from the system\'s mirror policy', async () => {
     const daemon = daemonWith(fakeSystem(PACKAGE));

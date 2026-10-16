@@ -74,12 +74,7 @@ export function sha256(text: string): string {
 export interface TrustEntry {
   sha256: string;
   approvedAt: string;
-  /** The merge rule the approval was given under; 2 since objects merge key by key (ADR-006). */
-  merge?: number;
 }
-
-/** The merge rule approvals are given under now (ADR-006): objects merge key by key. */
-export const MERGE_RULE = 2;
 
 /** Approved project configs by absolute path. */
 export type TrustStore = Record<string, TrustEntry>;
@@ -103,14 +98,9 @@ export async function readTrustStore(storePath: string = defaultTrustStorePath()
   }
 }
 
-/**
- * Whether this exact content is approved. A file that sets an object field (`mirror`, `rateLimit`)
- * means something else since objects merge key by key (ADR-006): approved before, it is asked for
- * again once.
- */
-export function isTrusted(store: TrustStore, configPath: string, hash: string, setsObject = false): boolean {
-  const entry = store[configPath];
-  return entry?.sha256 === hash && (!setsObject || entry.merge === MERGE_RULE);
+/** Whether this exact content is approved. */
+export function isTrusted(store: TrustStore, configPath: string, hash: string): boolean {
+  return store[configPath]?.sha256 === hash;
 }
 
 /** Record the approval of this exact content. Written to a temp file and renamed, mode 0600. */
@@ -121,7 +111,7 @@ export async function approve(
   now: Date = new Date(),
 ): Promise<void> {
   const store = await readTrustStore(storePath);
-  store[configPath] = { sha256: hash, approvedAt: now.toISOString(), merge: MERGE_RULE };
+  store[configPath] = { sha256: hash, approvedAt: now.toISOString() };
   await mkdir(path.dirname(storePath), { recursive: true });
   const tmp = `${storePath}.${process.pid}.tmp`;
   await writeFile(tmp, `${JSON.stringify(store, null, 2)}\n`, { mode: 0o600 });

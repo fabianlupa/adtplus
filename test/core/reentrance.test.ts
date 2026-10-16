@@ -1,19 +1,19 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   captureReentranceTicket,
-  defaultSsoUrl,
+  defaultReentranceUrl,
   redeemReentranceTicket,
 } from '../../src/core/reentrance.js';
 
 afterEach(() => vi.unstubAllGlobals());
 
-describe('defaultSsoUrl', () => {
+describe('defaultReentranceUrl', () => {
   it('drops -api from a cloud API host', () => {
-    expect(defaultSsoUrl('https://my000000-api.s4hana.cloud.sap')).toBe('https://my000000.s4hana.cloud.sap');
+    expect(defaultReentranceUrl('https://my000000-api.s4hana.cloud.sap')).toBe('https://my000000.s4hana.cloud.sap');
   });
 
   it('leaves other hosts alone', () => {
-    expect(defaultSsoUrl('https://onprem.example:44300/')).toBe('https://onprem.example:44300');
+    expect(defaultReentranceUrl('https://onprem.example:44300/')).toBe('https://onprem.example:44300');
   });
 });
 
@@ -21,7 +21,7 @@ describe('captureReentranceTicket', () => {
   it('opens the logon URL and resolves with the ticket SAP redirects back', async () => {
     let opened = '';
     const ticket = captureReentranceTicket({
-      ssoUrl: 'https://my1.example',
+      reentranceUrl: 'https://my1.example',
       openUrl: async (url) => {
         opened = url;
         const redirect = new URL(url).searchParams.get('redirect-url')!;
@@ -38,7 +38,7 @@ describe('captureReentranceTicket', () => {
 
   it('rejects when opening the browser fails', async () => {
     await expect(
-      captureReentranceTicket({ ssoUrl: 'https://my1.example', openUrl: async () => Promise.reject(new Error('no open')) }),
+      captureReentranceTicket({ reentranceUrl: 'https://my1.example', openUrl: async () => Promise.reject(new Error('no open')) }),
     ).rejects.toThrow('no open');
   });
 });

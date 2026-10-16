@@ -231,8 +231,9 @@ No notes.
 
 - No `additionalFields`; SAP's name check first. `properties.messages` adds messages right after
   the create (an `update`, in the same request).
-- Texts in the logon language; the system's `languageVersion` sent when not standard (`cloud-erp` not
-  verified).
+- Texts in the logon language. The ABAP language version is the package's default (one more
+  package read on `onprem`), on `cloud` always `cloudDevelopment`; sent when not standard
+  (`cloud-erp` not verified).
 - In a package that records changes only with `transport`, refused before any request
   otherwise (SAP would create it unrecorded).
 - Read back.
@@ -245,8 +246,8 @@ No notes.
   is `description`) and no `fixedValueAppends`. An output length left out or 0 is computed by the
   activation (`onprem`: `DEC` 10,2 → 13).
 - SAP's name check first. Texts in the logon language (SAP keeps a domain's texts in its master
-  language only; a create naming another left them inconsistent), the system's `languageVersion`
-  sent when not standard (`cloud-erp` sets `cloudDevelopment` itself).
+  language only; a create naming another left them inconsistent). The ABAP language version as
+  for message classes (`cloud-erp` sets `cloudDevelopment` itself).
 - The request rule of message classes; one POST with the whole domain. The result is the inactive
   version (`version`: `new` on `onprem`, `inactive` on `cloud-erp`): `activate` it.
 - Read back: a field SAP stored other than sent fails the call.
@@ -259,7 +260,7 @@ No notes.
   activation would refuse it, its write doesn't). Names (type, search help and its parameter,
   parameter ID, default component name) are sent in upper case: SAP stores them as sent, then its
   activation finds none.
-- SAP's name check, the language and the request rule as for domains. SAP's create doesn't store
+- SAP's name check, the language, the language version and the request rule as for domains. SAP's create doesn't store
   everything sent (it gives every label its maximum length; `cloud-erp`'s drops a predefined type), so
   when the read-back differs a lock → PUT of the whole data element follows, then the read-back
   that fails the call. Never activated (`version: new`): `activate` it.
@@ -446,7 +447,7 @@ exists only then): a refusal then says the definition was changed and no text wr
 
 - SAP's one action toggles: adt+ reads the binding's state first (`allowedAction`; S/4HANA 2023
   and OData V2: `published`) and refuses, with nothing sent, a binding already in the state asked
-  for. `allowPublishService: false` refuses both.
+  for. `allowPublish: false` refuses both.
 - Read-back via `fetch_services`, else the binding details.
 - Cloud ~132 s; refused for minutes after a publish ([below](#known-issues)).
 

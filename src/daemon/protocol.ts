@@ -577,7 +577,7 @@ export interface MirrorStatusRequest extends MirrorLocationFields {
   cmd: 'mirror.status';
 }
 
-/** Local only: the system gives the language version abaplint checks against; no SAP call. */
+/** Local only: each object is linted at the language version its `.json` names, else the system's (`systemLanguageVersion`); no SAP call. */
 export interface MirrorCheckRequest extends MirrorLocationFields {
   cmd: 'mirror.check';
   system: string;
@@ -585,7 +585,7 @@ export interface MirrorCheckRequest extends MirrorLocationFields {
   rules?: Record<string, boolean>;
 }
 
-/** Local only: AFF skeleton files for a new object; the system gives the language version. */
+/** Local only: AFF skeleton files for a new object; a cloud system's language version, none on premise (the package default applies). */
 export interface MirrorNewRequest extends MirrorLocationFields {
   cmd: 'mirror.new';
   system: string;

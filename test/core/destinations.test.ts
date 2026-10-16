@@ -421,28 +421,39 @@ describe('loadConfig with project configs (ADR-006)', () => {
   });
 
   it('merges an object field key by key, nested ones too; a list inside it still replaces (ADR-006)', async () => {
-    const inner = { onprem: { mirror: { maxObjects: 2000, namespaces: ['/OTHER/'] }, rateLimit: { perMinute: 100 } } };
+    const inner = { onprem: { mirror: { maxObjects: 2000, namespaces: ['/OTHER/'] }, rateLimit: { perMinute: 100 }, format: { abapCleaner: { path: '/opt/abap-cleaner' } } } };
     const i = project('cust', inner);
     await trusted(i, inner);
-    const user = { onprem: { ...ONPREM, mirror: { git: { enabled: true }, namespaces: ['/NSPC/'], concurrency: 5 }, rateLimit: { concurrency: 2 } } };
+    const user = {
+      onprem: {
+        ...ONPREM,
+        mirror: { namespaces: ['/NSPC/'], concurrency: 5 },
+        rateLimit: { concurrency: 2 },
+        format: { engine: 'abap-cleaner' as const, abapCleaner: { release: '758' } },
+      },
+    };
     const userPath = write('systems.json', user);
 
     const config = await load([i], userPath);
 
     expect(config.destinations.onprem).toMatchObject({
-      mirror: { git: { enabled: true }, namespaces: ['/OTHER/'], concurrency: 5, maxObjects: 2000 },
+      mirror: { namespaces: ['/OTHER/'], concurrency: 5, maxObjects: 2000 },
       rateLimit: { concurrency: 2, perMinute: 100 },
+      format: { engine: 'abap-cleaner', abapCleaner: { release: '758', path: '/opt/abap-cleaner' } },
     });
     expect(config.sources.onprem).toMatchObject({
-      'mirror.git.enabled': userPath,
       'mirror.concurrency': userPath,
       'mirror.maxObjects': i,
       'mirror.namespaces': i,
       'rateLimit.concurrency': userPath,
       'rateLimit.perMinute': i,
+      'format.engine': userPath,
+      'format.abapCleaner.release': userPath,
+      'format.abapCleaner.path': i,
     });
     // The user layer's own objects are not changed by the merge.
     expect(config.layers[0]!.systems.onprem!.mirror).toEqual(user.onprem.mirror);
+    expect(config.layers[0]!.systems.onprem!.format).toEqual(user.onprem.format);
   });
 
   it('names a file whose only setting is an empty object among the sources', async () => {
@@ -451,14 +462,6 @@ describe('loadConfig with project configs (ADR-006)', () => {
     await trusted(i, inner);
     const config = await load([i]);
     expect(Object.values(config.sources.onprem!)).toContain(i);
-  });
-
-  it('asks again for an approved file setting an object field, approved under the earlier merge rule', async () => {
-    const inner = { onprem: { mirror: { maxObjects: 2000 } } };
-    const i = project('cust', inner);
-    writeFileSync(path.join(dir, 'trusted.json'), JSON.stringify({ [i]: { sha256: sha256(JSON.stringify(inner)), approvedAt: '2026-09-28T00:00:00Z' } }));
-    const config = await load([i]);
-    expect(config.refused.onprem).toMatch(/not approved/);
   });
 
   it('refuses every system an unapproved file sets, without falling back to the user values', async () => {

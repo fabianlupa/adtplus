@@ -36,13 +36,19 @@ The REST actions are ADR-002 fallbacks; they retire with ADT for VS Code 1.2
 
 - `name`, `package` (the superpackage), `description`, `transport` when the package records
   changes; `properties.generalInformation` may set `softwareComponent`, `transportLayer`,
-  `applicationComponent`, `supportsRecordChanges` and `defaultAbapLanguageVersion` (which must be
-  the system's). Defaults: software component from the superpackage (SAP can refuse another one,
-  TR458), else the system's `defaultSoftwareComponent`; layer and change recording from the
-  superpackage. A development package only.
-- Language version from policy, re-read after create. The responsible user is the logged-on user
-  (ADT's system information, read once per session; else the system's `user`), as ADT's wizard
-  proposes; AFF has no field for it.
+  `applicationComponent`, `supportsRecordChanges` and `defaultAbapLanguageVersion`. Defaults from
+  the superpackage: software component (SAP can refuse another one, TR458), layer and change
+  recording. A development package only.
+- Software component: neither the call nor the superpackage naming one refuses the create before
+  SAP's validation, with "pass softwareComponent; ask the user which one". adt+ guesses none.
+- Language version: on a `cloud` system always `cloudDevelopment` (another is refused before any
+  call); on `onprem` the call's, else the superpackage's. It is only the default for objects
+  created in the package; what its software component allows, SAP decides on create, and not
+  always loudly: on `onprem` a package in `HOME` asked for `cloudDevelopment` passes SAP's
+  validation and is created as standard (2026-10-16). The read-back after create catches that and
+  fails the call, naming both versions; the package stays (fix or delete it).
+- The responsible user is the logged-on user (ADT's system information, read once per session;
+  else the system's `user`), as ADT's wizard proposes; AFF has no field for it.
 
 ## update
 

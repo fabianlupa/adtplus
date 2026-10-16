@@ -47,7 +47,7 @@ entry of the system's `writeAllowlist` (`src/capabilities/policy.ts`).
 
 - **Per-system switches** for what reaches beyond development artifacts, off by default:
   `allowRun` (ADR-005), `allowDataPreview` (ADR-013), `allowRuntimeLogs` (ADR-015),
-  `allowTranslations` (ADR-019); `allowPublishService: false` turns publishing off.
+  `allowTranslations` (ADR-019), `allowGitRemote` (ADR-011); `allowPublish: false` turns publishing off.
 - **A mirrored object** is written through its mirror, not in the system (ADR-009).
 - **`confirm: true`** stays on irreversible actions, `run`, `publish` and `unpublish` as a speed
   bump for the model. It is not a gate.
@@ -65,3 +65,4 @@ entry of the system's `writeAllowlist` (`src/capabilities/policy.ts`).
 ## Changes
 
 - 2026-10-15: restated as it holds today for the public release.
+- 2026-10-16: `allowPublishService` renamed `allowPublish` (ADR-018, one name with the actions); the git opt-in is the switch `allowGitRemote`.

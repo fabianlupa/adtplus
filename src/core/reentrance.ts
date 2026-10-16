@@ -9,14 +9,14 @@ const DEFAULT_CAPTURE_TIMEOUT_MS = 180_000;
  * without `-api` (my000000-api.s4hana.cloud.sap → my000000.s4hana.cloud.sap).
  * adt-ls's own logonUrl uses that host too.
  */
-export function defaultSsoUrl(systemUrl: string): string {
+export function defaultReentranceUrl(systemUrl: string): string {
   const url = new URL(systemUrl);
   url.hostname = url.hostname.replace(/-api(?=\.)/, '');
   return url.origin;
 }
 
 export interface CaptureOptions {
-  ssoUrl: string;
+  reentranceUrl: string;
   openUrl: (url: string) => Promise<void>;
   timeoutMs?: number;
 }
@@ -44,7 +44,7 @@ export function captureReentranceTicket(opts: CaptureOptions): Promise<string> {
     server.listen(0, '127.0.0.1', () => {
       const address = server.address();
       const port = typeof address === 'object' && address ? address.port : 0;
-      const logonUrl = new URL(REENTRANCE_PATH, opts.ssoUrl);
+      const logonUrl = new URL(REENTRANCE_PATH, opts.reentranceUrl);
       logonUrl.searchParams.set('redirect-url', `http://localhost:${port}/adt/redirect`);
       logonUrl.searchParams.set('_', String(Date.now()));
       opts.openUrl(logonUrl.toString()).catch((err: unknown) => {

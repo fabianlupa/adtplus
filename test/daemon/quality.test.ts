@@ -21,7 +21,6 @@ const onprem: Destination = {
   systemUrl: 'https://onprem.example',
   extraCaCerts: [],
   writeAllowlist: [],
-  languageVersion: 'standard',
   vfsMount: 'DEV-100',
 };
 

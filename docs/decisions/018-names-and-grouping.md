@@ -50,6 +50,9 @@ one kind of risk.
   and the CLI leaves it out: `adtplus test`, `adtplus run`, `adtplus data`.
 - **`ADTPLUS_DENY` refuses a name it doesn't know**: a stale name can't silently deny nothing. A
   later rename keeps a table of old names, and the error names the new one.
+- **Switches:** a per-system gate in `systems.json` is a flat boolean `allow<X>`, X SAP's term for
+  what it opens or the action it gates (`allowRun`, `allowPublish`, `allowDataPreview`,
+  `allowGitRemote`).
 - **Parameters:** `transport` for a request or task everywhere, `package` everywhere
   (`superPackage` is SAP's term and stays), `maxResults` for every result cap.
 - The git helper's internal commands (`mirror.changes`, `swc.packages`, `history.versions`,
@@ -87,7 +90,7 @@ one kind of risk.
   session; `messages`, like `connect`, does.
 - **`publish` and `unpublish`**, not a toggle: each reads the binding's state first and is refused
   when it is already there; the gates are the write allowlist, `confirm: true` and
-  `allowPublishService`.
+  `allowPublish`.
 
 ### `update`: source, or the type's AFF JSON
 
@@ -126,3 +129,4 @@ one kind of risk.
 ## Changes
 
 - 2026-10-15: restated as it holds today for the public release, with the retired ADR it absorbed merged in.
+- 2026-10-16: the naming rule covers the `systems.json` switches ("Switches"): `allowPublish` (was `allowPublishService`), `reentranceUrl` (was `ssoUrl`, SAP's term), `allowGitRemote` (was `mirror.git.enabled`).

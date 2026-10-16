@@ -53,10 +53,10 @@ describe('describeLayer', () => {
   });
 
   it('does not warn on a closed gate or a rate limit', () => {
-    const summary = describeLayer(layer({ onprem: { allowPublishService: false, rateLimit: { perMinute: 10 } } }), { onprem: {} });
+    const summary = describeLayer(layer({ onprem: { allowPublish: false, rateLimit: { perMinute: 10 } } }), { onprem: {} });
 
     expect(summary.systems[0]?.fields).toEqual([
-      { field: 'allowPublishService', value: 'false', warn: false },
+      { field: 'allowPublish', value: 'false', warn: false },
       { field: 'rateLimit', value: '{"perMinute":10}', warn: false },
     ]);
   });
@@ -70,15 +70,21 @@ describe('describeLayer, an object field (ADR-006)', () => {
     ]);
   });
 
-  it('shows mirror among the gates and warns when the merge turns the git helper on', () => {
-    const on = describeLayer(layer({ onprem: { mirror: { git: { enabled: true } } } }), { onprem: { mirror: { namespaces: ['/X/'] } } });
-    expect(on.systems[0]?.fields).toEqual([
-      { field: 'mirror', value: '{"git":{"enabled":true},"namespaces":["/X/"]}', was: '{"namespaces":["/X/"]}', warn: true },
+  it('shows mirror among the gates without a warning: its limits widen what a mirror may hold, nothing more', () => {
+    const summary = describeLayer(layer({ onprem: { mirror: { maxObjects: 9 } } }), { onprem: { mirror: { namespaces: ['/X/'] } } });
+    expect(summary.systems[0]?.fields).toEqual([
+      { field: 'mirror', value: '{"maxObjects":9,"namespaces":["/X/"]}', was: '{"namespaces":["/X/"]}', warn: false },
     ]);
-    expect(on.systems[0]?.also).toEqual([]);
-    // Already on in the user config: the project's maxObjects keeps it on, which is no change.
-    const kept = describeLayer(layer({ onprem: { mirror: { maxObjects: 9 } } }), { onprem: { mirror: { git: { enabled: true } } } });
-    expect(kept.systems[0]?.fields[0]).toMatchObject({ field: 'mirror', value: '{"maxObjects":9,"git":{"enabled":true}}', warn: false });
+    expect(summary.systems[0]?.also).toEqual([]);
+  });
+});
+
+describe('describeLayer, allowGitRemote (ADR-011)', () => {
+  it('warns when a project config turns the git helper on, not when it turns it off', () => {
+    const on = describeLayer(layer({ onprem: { allowGitRemote: true } }), { onprem: {} });
+    expect(on.systems[0]?.fields).toEqual([{ field: 'allowGitRemote', value: 'true', warn: true }]);
+    const off = describeLayer(layer({ onprem: { allowGitRemote: false } }), { onprem: { allowGitRemote: true } });
+    expect(off.systems[0]?.fields).toEqual([{ field: 'allowGitRemote', value: 'false', was: 'true', warn: false }]);
   });
 });
 

@@ -1,4 +1,3 @@
-import { LanguageVersion } from '@abaplint/core';
 import type { AdtLsClient } from '@arc-mcp/adt-ls';
 import { describe, expect, it, vi } from 'vitest';
 import * as quality from '../../src/capabilities/quality.js';
@@ -18,6 +17,9 @@ const CLAS_SOURCE = [
   '',
 ].join('\n');
 
+/** The AFF `.json` of a class at `version`. */
+const classJson = (version: string) => JSON.stringify({ formatVersion: '1', header: { description: 'x', originalLanguage: 'en', abapLanguageVersion: version } });
+
 function fakeAdt(overrides: Record<string, unknown> = {}): AdtLsClient {
   return {
     quality: {
@@ -29,7 +31,7 @@ function fakeAdt(overrides: Record<string, unknown> = {}): AdtLsClient {
       runUnitTests: vi.fn(async () => ({ message: 'Overall Test Run Status: [PASSED]' })),
       resolveAffUri: vi.fn(async () => 'abap:/repotree-v1/adtplus_onprem/System%20Library/ZADTPLUS_TEST/Source%20Code%20Library/Classes/ZCL_ADTPLUS_M3/zcl_adtplus_m3.clas.abap'),
     },
-    repository: { readFile: vi.fn(async () => CLAS_SOURCE) },
+    repository: { readFile: vi.fn(async (uri: string) => (uri.endsWith('.json') ? classJson('standard') : CLAS_SOURCE)) },
     source: { read: vi.fn(async () => CLAS_SOURCE) },
     ...overrides,
   } as unknown as AdtLsClient;
@@ -45,10 +47,9 @@ const onprem: Destination = {
   systemUrl: 'https://onprem.example',
   extraCaCerts: [],
   writeAllowlist: [],
-  languageVersion: 'standard',
 };
 
-const cloudErp: Destination = { ...onprem, id: 'cloud-erp', kind: 'cloud', languageVersion: 'cloudDevelopment' };
+const cloudErp: Destination = { ...onprem, id: 'cloud-erp', kind: 'cloud' };
 
 /** Unit tests execute code, so they need the object's package in the allowlist (docs/decisions/003-write-gates.md). */
 const testable: Destination = { ...onprem, writeAllowlist: ['ZADTPLUS_TEST'] };
@@ -75,20 +76,36 @@ describe('quality capability', () => {
     expect(adt.lifecycle.runUnitTests).not.toHaveBeenCalled();
   });
 
-  it('runAbaplint picks the Normal preset for on-prem and finds the unused variable', async () => {
+  it('runAbaplint lints an on-prem object at the version its .json names and finds the unused variable', async () => {
     const adt = fakeAdt();
     const result = await quality.runAbaplint(adt, onprem, ref);
 
-    expect(result.languageVersion).toBe(LanguageVersion.Normal);
+    expect(result.languageVersion).toBe('standard');
+    expect(adt.repository.readFile).toHaveBeenCalledWith(expect.stringMatching(/\/ZCL_ADTPLUS_M3\/zcl_adtplus_m3\.clas\.json$/));
     expect(result.filename).toBe('zcl_adtplus_m3.clas.abap');
     expect(result.findings.some((f) => f.key === 'unused_variables')).toBe(true);
   });
 
-  it('runAbaplint picks the Cloud preset for cloud systems', async () => {
+  it('runAbaplint reads a cloudDevelopment object on premise as such, standard when the .json is unreadable', async () => {
+    const json = (read: () => Promise<string>) =>
+      fakeAdt({ repository: { readFile: vi.fn(async (uri: string) => (uri.endsWith('.json') ? read() : CLAS_SOURCE)) } });
+    expect((await quality.runAbaplint(json(async () => classJson('cloudDevelopment')), onprem, ref)).languageVersion).toBe('cloudDevelopment');
+    const unreadable = json(async () => {
+      throw new Error('not found');
+    });
+    expect((await quality.runAbaplint(unreadable, onprem, ref)).languageVersion).toBe('standard');
+    const throttled = json(async () => {
+      throw new ThrottledError('slow down', 1000);
+    });
+    await expect(quality.runAbaplint(throttled, onprem, ref)).rejects.toThrow(ThrottledError);
+  });
+
+  it('runAbaplint lints at cloudDevelopment on a cloud system without reading the .json', async () => {
     const adt = fakeAdt();
     const result = await quality.runAbaplint(adt, cloudErp, ref);
 
-    expect(result.languageVersion).toBe(LanguageVersion.Cloud);
+    expect(result.languageVersion).toBe('cloudDevelopment');
+    expect(adt.repository.readFile).not.toHaveBeenCalledWith(expect.stringMatching(/\.json$/));
   });
 });
 
@@ -247,9 +264,22 @@ describe('quality batches', () => {
     const together = await quality.runAbaplintBatch(adt, onprem, refs.slice(0, 2), 4, rules);
     expect(typo(together.findings)).toBe(true);
     expect(together.findings.find((f) => f.check === 'check_syntax')?.severity).toBe('warning');
-    expect(together.languageVersion).toBe(LanguageVersion.Normal);
+    expect(together.languageVersions).toEqual({ standard: 2 });
     expect(together.checked).toBe(2);
     expect(together.findings.every((f) => f.object === 'CLAS ZCL_A' || f.object === 'CLAS ZCL_B')).toBe(true);
+  });
+
+  it('runAbaplintBatch lints each object at its own language version, one run per version', async () => {
+    const cls = (name: string) =>
+      `CLASS ${name} DEFINITION PUBLIC FINAL CREATE PUBLIC.\n  PUBLIC SECTION.\n    METHODS m.\nENDCLASS.\nCLASS ${name} IMPLEMENTATION.\n  METHOD m.\n    WRITE 'x'.\n  ENDMETHOD.\nENDCLASS.\n`;
+    const adt = fakeAdt({
+      lifecycle: { resolveAffUri: vi.fn(async (ref: { name: string }) => uriOf(ref.name)) },
+      source: { read: vi.fn(async (ref: { name: string }) => cls(ref.name.toLowerCase())) },
+      repository: { readFile: vi.fn(async (uri: string) => classJson(uri.includes('/ZCL_A/') ? 'cloudDevelopment' : 'standard')) },
+    });
+    const result = await quality.runAbaplintBatch(adt, onprem, refs.slice(0, 2), 4);
+    expect(result.languageVersions).toEqual({ cloudDevelopment: 1, standard: 1 });
+    expect([...new Set(result.findings.filter((f) => f.severity === 'error').map((f) => f.object))]).toEqual(['CLAS ZCL_A']);
   });
 
   it('refuses an empty batch and one over 50 objects', async () => {

@@ -3,7 +3,7 @@ import path from 'node:path';
 import { checkFormat } from './editorconfig.js';
 import { adtLsChange, filesBelow } from './files.js';
 import { REMOTE_SUFFIX, SRC_DIR, affClassFileFor, isReadOnlyFile, resolveRoot } from './layout.js';
-import { abaplintVersion, lint, type RuleSwitches } from './lint.js';
+import { lint, type AffLanguageVersion, type RuleSwitches } from './lint.js';
 import { loadManifest } from './manifest.js';
 import { parseMsag } from './msag.js';
 import { MAX_LISTED, listed, type Listed, type MirrorLocation } from './pull.js';
@@ -18,8 +18,8 @@ import { validateAffJson } from './schema.js';
 
 export interface CheckInput extends MirrorLocation {
   system: string;
-  /** The system's `languageVersion` (systems.json); unset lints as standard ABAP. */
-  languageVersion?: string;
+  /** The language version of an object whose `.json` names none (`systemLanguageVersion`). */
+  languageVersion: AffLanguageVersion;
   /** The adt-ls version adt+ runs now, to compare with the last pull's. */
   adtLsVersion?: string;
   /** abaplint rule switches on top of the default. */
@@ -40,8 +40,8 @@ export interface CheckFinding {
 export interface CheckResult {
   root: string;
   system: string;
-  /** What abaplint ran with. */
-  languageVersion: 'cloud' | 'standard';
+  /** Objects abaplint linted per language version, each at its own (from its `.json`). */
+  languageVersions: Partial<Record<AffLanguageVersion, number>>;
   files: number;
   /** Objects abaplint linted. */
   objects: number;
@@ -130,7 +130,7 @@ export async function check(input: CheckInput): Promise<CheckResult> {
     }
   }
 
-  const linted = await lint(toLint, abaplintVersion(input.languageVersion), input.rules);
+  const linted = await lint(toLint, input.languageVersion, input.rules);
   for (const f of linted.findings) {
     findings.push({ path: f.file, line: f.line, col: f.col, rule: f.rule, severity: f.severity, message: f.message });
   }
@@ -168,7 +168,7 @@ export async function check(input: CheckInput): Promise<CheckResult> {
   return {
     root,
     system: manifest.system,
-    languageVersion: input.languageVersion === 'cloudDevelopment' ? 'cloud' : 'standard',
+    languageVersions: linted.languageVersions,
     files,
     objects: linted.objects,
     ok: errors === 0,

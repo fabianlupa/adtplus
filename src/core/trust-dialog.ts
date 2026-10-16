@@ -2,12 +2,12 @@ import { execFile } from 'node:child_process';
 import { mergeConfigValue, type ConfigLayer, type SystemEntry } from './destinations.js';
 
 /** Fields that decide where adt+ connects and with which credentials: a change here can send a password elsewhere. */
-const CONNECTION_FIELDS = ['kind', 'auth', 'client', 'systemUrl', 'adtlsDestinationId', 'ssoUrl', 'user', 'keychainService', 'extraCaCerts'];
+const CONNECTION_FIELDS = ['kind', 'auth', 'client', 'systemUrl', 'adtlsDestinationId', 'reentranceUrl', 'user', 'keychainService', 'extraCaCerts'];
 /**
- * Fields that open or close write gates (ADR-003, ADR-005); `mirror` holds the git helper's (ADR-011),
- * `format` the abap-cleaner binary and profile adt+ runs (ADR-017).
+ * Fields that open or close write gates (ADR-003, ADR-005), the git helper's among them (ADR-011);
+ * `format` names the abap-cleaner binary and profile adt+ runs (ADR-017).
  */
-const GATE_FIELDS = ['writeAllowlist', 'allowRun', 'allowDataPreview', 'allowRuntimeLogs', 'allowTranslations', 'allowPublishService', 'rateLimit', 'restTimeout', 'mirror', 'format'];
+const GATE_FIELDS = ['writeAllowlist', 'allowRun', 'allowDataPreview', 'allowRuntimeLogs', 'allowTranslations', 'allowPublish', 'allowGitRemote', 'rateLimit', 'restTimeout', 'mirror', 'format'];
 
 /**
  * An object field as it becomes after the merge (ADR-006), the keys this file sets first: the
@@ -19,9 +19,6 @@ function merged(before: unknown, own: unknown): unknown {
   const all = value as Record<string, unknown>;
   return Object.fromEntries([...Object.keys(own), ...Object.keys(all).filter((k) => !(k in own))].map((k) => [k, all[k]]));
 }
-
-/** Whether a merged `mirror` turns the git helper on (ADR-011). */
-const gitEnabled = (mirror: unknown) => (mirror as { git?: { enabled?: unknown } } | undefined)?.git?.enabled === true;
 
 /** The abap-cleaner binary and profile a merged `format` names (ADR-017). */
 const cleanerFiles = (format: unknown) => {
@@ -82,11 +79,12 @@ export function describeLayer(layer: ConfigLayer, inherited: Record<string, Syst
       if (CONNECTION_FIELDS.includes(field)) warn = was !== undefined && was !== value;
       if (GATE_FIELDS.includes(field)) {
         warn =
-          field === 'mirror'
-            ? gitEnabled(after) && !gitEnabled(before?.mirror)
-            : field === 'format'
-              ? cleanerFiles(after) !== cleanerFiles(before?.format)
-              : field !== 'rateLimit' && field !== 'restTimeout' && !(field === 'allowPublishService' && fields[field] === false);
+          field === 'format'
+            ? cleanerFiles(after) !== cleanerFiles(before?.format)
+            : field !== 'rateLimit' &&
+              field !== 'restTimeout' &&
+              field !== 'mirror' &&
+              !((field === 'allowPublish' || field === 'allowGitRemote') && fields[field] === false);
       }
       return was === undefined ? { field, value, warn } : { field, value, was, warn };
     });

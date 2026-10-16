@@ -7,6 +7,7 @@ import type { RawAdtClient, RequestOptions } from '../../src/backends/rawadt.js'
 import type { Destination } from '../../src/core/destinations.js';
 import type { SessionManager } from '../../src/core/session.js';
 import { createDaemonServer } from '../../src/daemon/server.js';
+import { packageBody } from '../helpers/rest.js';
 
 let dir: string;
 beforeEach(() => {
@@ -37,6 +38,7 @@ function daemonWith(readOnly = false) {
   const request = async (method: string, p: string, opts: RequestOptions = {}) => {
     calls.push({ method, path: p, opts });
     if (method === 'DELETE') gone = true;
+    if (method === 'GET' && p === '/sap/bc/adt/packages/zpkg') return { status: 200, headers: new Headers(), body: packageBody('ZPKG') };
     const body = opts.query?._action === 'LOCK' ? '<LOCK_HANDLE>H1</LOCK_HANDLE><CORRNR>DEVK900001</CORRNR>' : method === 'GET' && !gone ? CLASS : '';
     return { status: method === 'GET' && gone ? 404 : 200, headers: new Headers(), body };
   };

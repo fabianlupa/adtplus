@@ -44,3 +44,14 @@ export function answeringRest(answers: Record<string, string>): RawAdtClient & {
     },
   } as unknown as RawAdtClient & { calls: Call[] };
 }
+
+/**
+ * A package's GET answer with only what create paths read: change recording and the language
+ * version, SAP's code (`''` standard, `'5'` ABAP for Cloud Development).
+ */
+export function packageBody(name: string, opts: { recordChanges?: boolean; languageVersion?: string } = {}): string {
+  return (
+    `<pak:package adtcore:name="${name}" xmlns:pak="http://www.sap.com/adt/packages" xmlns:adtcore="http://www.sap.com/adt/core">` +
+    `<pak:attributes pak:packageType="development" pak:recordChanges="${opts.recordChanges ?? true}" pak:languageVersion="${opts.languageVersion ?? ''}"/></pak:package>`
+  );
+}

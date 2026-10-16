@@ -30,11 +30,11 @@ const NAMES: Record<string, string> = { TABL: 'ZADTPLUS_NEW', BDEF: 'ZR_TRAVEL' 
 const nameFor = (type: string) => NAMES[type] ?? `ZADTPLUS_${type}_NEW`;
 
 describe('mirror new', () => {
-  for (const languageVersion of ['standard', 'cloudDevelopment']) {
+  for (const languageVersion of ['standard', 'cloudDevelopment'] as const) {
     it(`writes skeletons that pass check without errors (${languageVersion})`, async () => {
       for (const type of NEW_TYPES) {
         if (type === 'PROG' && languageVersion === 'cloudDevelopment') continue;
-        await newObject({}, { ...loc(), type, name: nameFor(type), description: `It's ${type}`, languageVersion });
+        await newObject({}, { ...loc(), type, name: nameFor(type), description: `It's ${type}`, languageVersion: languageVersion === 'cloudDevelopment' ? languageVersion : undefined });
       }
       const result = await check({ ...loc(), languageVersion });
       expect(result.findings.filter((f) => f.severity === 'error')).toEqual([]);
@@ -72,8 +72,8 @@ describe('mirror new', () => {
     expect(s.added.paths).toEqual(['src/zadtplus_a/zcl_adtplus_new.clas.abap', 'src/zadtplus_a/zcl_adtplus_new.clas.json']);
   });
 
-  it('leaves the language version out on a standard system', async () => {
-    await newObject({}, { ...loc(), type: 'INTF', name: 'ZIF_ADTPLUS_NEW', languageVersion: 'standard' });
+  it('leaves the language version out on an on-premise system (the package default applies)', async () => {
+    await newObject({}, { ...loc(), type: 'INTF', name: 'ZIF_ADTPLUS_NEW' });
     expect(JSON.parse(read('src/zadtplus_a/zif_adtplus_new.intf.json')).header).toEqual({ description: 'ZIF_ADTPLUS_NEW', originalLanguage: 'en' });
   });
 

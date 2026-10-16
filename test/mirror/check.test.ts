@@ -62,7 +62,7 @@ describe('mirror check', () => {
     const result = await run();
     expect(result).toMatchObject({
       system: 'onprem',
-      languageVersion: 'standard',
+      languageVersions: { standard: 1 },
       files: 4,
       objects: 1,
       ok: true,
@@ -162,7 +162,7 @@ describe('mirror check', () => {
     put('src/zadtplus_a/zt.tabl.ddic', 'define table zt {\n  key id : abap.numc(8) not null;\n}\n');
     put('src/zadtplus_a/zfg.fugr.z_fm.func.abap', 'FUNCTION z_fm.\nENDFUNCTION.\n');
     const result = await run({ languageVersion: 'cloudDevelopment', adtLsVersion: '1.2.0' });
-    expect(result.languageVersion).toBe('cloud');
+    expect(result.languageVersions).toEqual({ cloudDevelopment: 2 });
     expect(result.notes).toHaveLength(2);
     expect(result.adtLsChanged).toEqual({ pulled: '1.1.2', running: '1.2.0' });
   });
