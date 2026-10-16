@@ -1,0 +1,265 @@
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file datatype="plaintext" original="ZADTPLUS_TRPR_P2" source-language="en-US" target-language="de-DE">
+    <header>
+      <tool tool-company="SAP SE" tool-id="urn:x-sap:maintain-translations-fiori-app" tool-name="Maintain Translations Fiori App" tool-version="1.0.0"/>
+    </header>
+    <body>
+      <group datatype="x-DATA_ELEMENT" resname="ZADTPLUS_RECIPE_RATING">
+        <trans-unit id="DATA_ELEMENT:ZADTPLUS_RECIPE_RATING:SHORT_DESCRIPTION" maxwidth="60" size-unit="char">
+          <source>Recipe Rating</source>
+          <note>Short description for Data Element ZADTPLUS_RECIPE_RATING.</note>
+        </trans-unit>
+        <trans-unit id="DATA_ELEMENT:ZADTPLUS_RECIPE_RATING:SHORT_FIELD_LABEL" maxwidth="10" size-unit="char">
+          <source>Rating</source>
+          <note>Short field label for Data Element ZADTPLUS_RECIPE_RATING.</note>
+        </trans-unit>
+        <trans-unit id="DATA_ELEMENT:ZADTPLUS_RECIPE_RATING:MEDIUM_FIELD_LABEL" maxwidth="20" size-unit="char">
+          <source>Rating</source>
+          <note>Medium field label for Data Element ZADTPLUS_RECIPE_RATING.</note>
+        </trans-unit>
+        <trans-unit id="DATA_ELEMENT:ZADTPLUS_RECIPE_RATING:LONG_FIELD_LABEL" maxwidth="40" size-unit="char">
+          <source>Recipe Rating</source>
+          <note>Long field label for Data Element ZADTPLUS_RECIPE_RATING.</note>
+        </trans-unit>
+        <trans-unit id="DATA_ELEMENT:ZADTPLUS_RECIPE_RATING:HEADING_FIELD_LABEL" maxwidth="55" size-unit="char">
+          <source>Rating</source>
+          <note>Heading field label for Data Element ZADTPLUS_RECIPE_RATING.</note>
+        </trans-unit>
+      </group>
+      <group datatype="x-DOMAIN" resname="ZADTPLUS_RECIPE_RATING">
+        <trans-unit id="DOMAIN:ZADTPLUS_RECIPE_RATING:FIXED_VALUE_DESCRIPTION:5" maxwidth="60" size-unit="char">
+          <source>Amazing</source>
+          <note>Description for fixed value 5 of domain ZADTPLUS_RECIPE_RATING.</note>
+        </trans-unit>
+        <trans-unit id="DOMAIN:ZADTPLUS_RECIPE_RATING:FIXED_VALUE_DESCRIPTION:4" maxwidth="60" size-unit="char">
+          <source>Good</source>
+          <note>Description for fixed value 4 of domain ZADTPLUS_RECIPE_RATING.</note>
+        </trans-unit>
+        <trans-unit id="DOMAIN:ZADTPLUS_RECIPE_RATING:FIXED_VALUE_DESCRIPTION:3" maxwidth="60" size-unit="char">
+          <source>Eh</source>
+          <note>Description for fixed value 3 of domain ZADTPLUS_RECIPE_RATING.</note>
+        </trans-unit>
+        <trans-unit id="DOMAIN:ZADTPLUS_RECIPE_RATING:FIXED_VALUE_DESCRIPTION:2" maxwidth="60" size-unit="char">
+          <source>Bad</source>
+          <note>Description for fixed value 2 of domain ZADTPLUS_RECIPE_RATING.</note>
+        </trans-unit>
+        <trans-unit id="DOMAIN:ZADTPLUS_RECIPE_RATING:FIXED_VALUE_DESCRIPTION:1" maxwidth="60" size-unit="char">
+          <source>Please no</source>
+          <note>Description for fixed value 1 of domain ZADTPLUS_RECIPE_RATING.</note>
+        </trans-unit>
+      </group>
+      <group datatype="x-DATA_DEFINITION" resname="ZC_ADTPLUS_RECIPE">
+        <trans-unit id="DATA_DEFINITION:ZC_ADTPLUS_RECIPE:ENDUSERTEXT.LABEL:ENTITY" maxwidth="40" size-unit="char">
+          <source>Projection View for ZR_ADTPLUS_RECIPE</source>
+          <note>End user text label for entity ZC_ADTPLUS_RECIPE.</note>
+        </trans-unit>
+      </group>
+      <group datatype="x-METADATA_EXTENSION" resname="ZC_ADTPLUS_RECIPE">
+        <trans-unit id="METADATA_EXTENSION:ZC_ADTPLUS_RECIPE:UI.HEADERINFO.TYPENAME:ENTITY" maxwidth="40" size-unit="char">
+          <source>ZC_ADTPLUS_RECIPE</source>
+          <note>UI header information type name of entity ZC_ADTPLUS_RECIPE.</note>
+        </trans-unit>
+        <trans-unit id="METADATA_EXTENSION:ZC_ADTPLUS_RECIPE:UI.HEADERINFO.TYPENAMEPLURAL:ENTITY" maxwidth="40" size-unit="char">
+          <source>ZC_ADTPLUS_RECIPEs</source>
+          <note>UI header information type name plural of entity ZC_ADTPLUS_RECIPE.</note>
+        </trans-unit>
+        <trans-unit id="METADATA_EXTENSION:ZC_ADTPLUS_RECIPE:UI.FACET$1$.LABEL:FIELD:UUID" maxwidth="40" size-unit="char">
+          <source>ZC_ADTPLUS_RECIPE</source>
+          <note>UI facet label for field UUID of entity ZC_ADTPLUS_RECIPE.</note>
+        </trans-unit>
+        <trans-unit id="METADATA_EXTENSION:ZC_ADTPLUS_RECIPE:UI.IDENTIFICATION$1$.LABEL:FIELD:CREATEDBY" maxwidth="40" size-unit="char">
+          <source/>
+          <note>UI identification label for field CREATEDBY of entity ZC_ADTPLUS_RECIPE.</note>
+        </trans-unit>
+        <trans-unit id="METADATA_EXTENSION:ZC_ADTPLUS_RECIPE:UI.LINEITEM$1$.LABEL:FIELD:CREATEDBY" maxwidth="40" size-unit="char">
+          <source/>
+          <note>UI line item label for field CREATEDBY of entity ZC_ADTPLUS_RECIPE.</note>
+        </trans-unit>
+        <trans-unit id="METADATA_EXTENSION:ZC_ADTPLUS_RECIPE:UI.IDENTIFICATION$1$.LABEL:FIELD:RATING" maxwidth="40" size-unit="char">
+          <source>Rating</source>
+          <note>UI identification label for field RATING of entity ZC_ADTPLUS_RECIPE.</note>
+        </trans-unit>
+        <trans-unit id="METADATA_EXTENSION:ZC_ADTPLUS_RECIPE:UI.LINEITEM$1$.LABEL:FIELD:RATING" maxwidth="40" size-unit="char">
+          <source>Rating</source>
+          <note>UI line item label for field RATING of entity ZC_ADTPLUS_RECIPE.</note>
+        </trans-unit>
+        <trans-unit id="METADATA_EXTENSION:ZC_ADTPLUS_RECIPE:UI.IDENTIFICATION$1$.LABEL:FIELD:CREATEDAT" maxwidth="40" size-unit="char">
+          <source/>
+          <note>UI identification label for field CREATEDAT of entity ZC_ADTPLUS_RECIPE.</note>
+        </trans-unit>
+        <trans-unit id="METADATA_EXTENSION:ZC_ADTPLUS_RECIPE:UI.LINEITEM$1$.LABEL:FIELD:CREATEDAT" maxwidth="40" size-unit="char">
+          <source/>
+          <note>UI line item label for field CREATEDAT of entity ZC_ADTPLUS_RECIPE.</note>
+        </trans-unit>
+        <trans-unit id="METADATA_EXTENSION:ZC_ADTPLUS_RECIPE:UI.IDENTIFICATION$1$.LABEL:FIELD:LASTCHANGEDBY" maxwidth="40" size-unit="char">
+          <source/>
+          <note>UI identification label for field LASTCHANGEDBY of entity ZC_ADTPLUS_RECIPE.</note>
+        </trans-unit>
+        <trans-unit id="METADATA_EXTENSION:ZC_ADTPLUS_RECIPE:UI.LINEITEM$1$.LABEL:FIELD:LASTCHANGEDBY" maxwidth="40" size-unit="char">
+          <source/>
+          <note>UI line item label for field LASTCHANGEDBY of entity ZC_ADTPLUS_RECIPE.</note>
+        </trans-unit>
+      </group>
+      <group datatype="x-LTO_DRTY" resname="ZADTPLUS_RECIPE_RATING_CDS">
+        <trans-unit id="LTO_DRTY:ZADTPLUS_RECIPE_RATING_CDS:ANNO_TEXT:RECORD:DDDRTY_A_TYPE_T:W1siQU5OT19OQU1FIiwiRU5EVVNFUlRFWFQuTEFCRUwiXSxbIkFOTk9fUE9TSVRJT04iLCIyIl0sWyJBUzRMT0NBTCIsIkEiXSxbIlRZUEVfTkFNRSIsIlpBRFRQTFVTX1JFQ0lQRV9SQVRJTkdfQ0RTIl1d==" maxwidth="255" size-unit="char">
+          <source>Recipe Rating</source>
+          <note>End user text label for CDS type definition ZADTPLUS_RECIPE_RATING_CDS.</note>
+        </trans-unit>
+      </group>
+      <group datatype="x-LTO_SAJC" resname="ZADTPLUS_JOB_TEST">
+        <trans-unit id="LTO_SAJC:ZADTPLUS_JOB_TEST:TEXT:RECORD:APJ_W_JCE_RO_T:W1siSk9CX0NBVEFMT0dfRU5UUllfTkFNRSIsIlpBRFRQTFVTX0pPQl9URVNUIl0sWyJKT0JfQ0FUQUxPR19FTlRSWV9WRVJTSU9OIiwiMCJdXQ=" maxwidth="120" size-unit="char">
+          <source>Test</source>
+          <note>The description of the job catalog.</note>
+        </trans-unit>
+        <trans-unit id="LTO_SAJC:ZADTPLUS_JOB_TEST:LOG_MESSAGE:RECORD:APJ_W_JCE_RO_T:W1siSk9CX0NBVEFMT0dfRU5UUllfTkFNRSIsIlpBRFRQTFVTX0pPQl9URVNUIl0sWyJKT0JfQ0FUQUxPR19FTlRSWV9WRVJTSU9OIiwiMCJdXQ=" maxwidth="120" size-unit="char">
+          <source/>
+          <note>The log message after the job is completed.</note>
+        </trans-unit>
+      </group>
+      <group datatype="x-LTO_SAJT" resname="ZADTPLUS_JOB_TEST">
+        <trans-unit id="LTO_SAJT:ZADTPLUS_JOB_TEST:TEXT:RECORD:APJ_W_JT_RO_T:W1siSk9CX1RFTVBMQVRFX05BTUUiLCJaQURUUExVU19KT0JfVEVTVCJdLFsiSk9CX1RFTVBMQVRFX1ZFUlNJT04iLCIwIl1d==" maxwidth="120" size-unit="char">
+          <source>Test</source>
+          <note>The description of the job template.</note>
+        </trans-unit>
+      </group>
+      <group datatype="x-IAM_BUSINESS_CATALOG" resname="ZADTPLUS_JOB_TEST">
+        <trans-unit id="IAM_BUSINESS_CATALOG:ZADTPLUS_JOB_TEST:DESCRIPTION" maxwidth="80" size-unit="char">
+          <source>Test</source>
+          <note>Description for IAM business catalog ZADTPLUS_JOB_TEST.</note>
+        </trans-unit>
+      </group>
+      <group datatype="x-DATA_DEFINITION" resname="ZC_TEMPLATEDOCUMENTTP">
+        <trans-unit id="DATA_DEFINITION:ZC_TEMPLATEDOCUMENTTP:ENDUSERTEXT.LABEL:ENTITY" maxwidth="40" size-unit="char">
+          <source>###GENERATED Core Data Service Entity</source>
+          <note>End user text label for entity ZC_TEMPLATEDOCUMENTTP.</note>
+        </trans-unit>
+      </group>
+      <group datatype="x-DATA_DEFINITION" resname="ZC_TEMPLATEDOCUMENTITEMTP">
+        <trans-unit id="DATA_DEFINITION:ZC_TEMPLATEDOCUMENTITEMTP:ENDUSERTEXT.LABEL:ENTITY" maxwidth="40" size-unit="char">
+          <source>Template Document Item</source>
+          <note>End user text label for entity ZC_TEMPLATEDOCUMENTITEMTP.</note>
+        </trans-unit>
+      </group>
+      <group datatype="x-DATA_DEFINITION" resname="ZI_TEMPLATEDOCUMENTITEM">
+        <trans-unit id="DATA_DEFINITION:ZI_TEMPLATEDOCUMENTITEM:ENDUSERTEXT.LABEL:ENTITY" maxwidth="40" size-unit="char">
+          <source>Template Document Item</source>
+          <note>End user text label for entity ZI_TEMPLATEDOCUMENTITEM.</note>
+        </trans-unit>
+      </group>
+      <group datatype="x-DATA_DEFINITION" resname="ZR_TEMPLATEDOCUMENTTP">
+        <trans-unit id="DATA_DEFINITION:ZR_TEMPLATEDOCUMENTTP:ENDUSERTEXT.LABEL:ENTITY" maxwidth="40" size-unit="char">
+          <source>###GENERATED Core Data Service Entity</source>
+          <note>End user text label for entity ZR_TEMPLATEDOCUMENTTP.</note>
+        </trans-unit>
+      </group>
+      <group datatype="x-DATA_DEFINITION" resname="ZR_TEMPLATEDOCUMENTITEMTP">
+        <trans-unit id="DATA_DEFINITION:ZR_TEMPLATEDOCUMENTITEMTP:ENDUSERTEXT.LABEL:ENTITY" maxwidth="40" size-unit="char">
+          <source>Template Document Item</source>
+          <note>End user text label for entity ZR_TEMPLATEDOCUMENTITEMTP.</note>
+        </trans-unit>
+      </group>
+      <group datatype="x-DATA_DEFINITION" resname="ZI_TEMPLATEDOCUMENT">
+        <trans-unit id="DATA_DEFINITION:ZI_TEMPLATEDOCUMENT:ENDUSERTEXT.LABEL:ENTITY" maxwidth="40" size-unit="char">
+          <source>Template Document</source>
+          <note>End user text label for entity ZI_TEMPLATEDOCUMENT.</note>
+        </trans-unit>
+      </group>
+      <group datatype="x-METADATA_EXTENSION" resname="ZC_TEMPLATEDOCUMENTITEMTP">
+        <trans-unit id="METADATA_EXTENSION:ZC_TEMPLATEDOCUMENTITEMTP:UI.FACET$1$.LABEL:FIELD:TEMPLATEDOCUMENT" maxwidth="40" size-unit="char">
+          <source>General Information</source>
+          <note>UI facet label for field TEMPLATEDOCUMENT of entity ZC_TEMPLATEDOCUMENTITEMTP.</note>
+        </trans-unit>
+      </group>
+      <group datatype="x-METADATA_EXTENSION" resname="ZC_TEMPLATEDOCUMENTTP">
+        <trans-unit id="METADATA_EXTENSION:ZC_TEMPLATEDOCUMENTTP:UI.FACET$1$.LABEL:FIELD:TEMPLATEDOCUMENT" maxwidth="40" size-unit="char">
+          <source>General Information</source>
+          <note>UI facet label for field TEMPLATEDOCUMENT of entity ZC_TEMPLATEDOCUMENTTP.</note>
+        </trans-unit>
+        <trans-unit id="METADATA_EXTENSION:ZC_TEMPLATEDOCUMENTTP:UI.FACET$2$.LABEL:FIELD:TEMPLATEDOCUMENT" maxwidth="40" size-unit="char">
+          <source>Items</source>
+          <note>UI facet label for line item reference entryItems of entity ZC_TEMPLATEDOCUMENTTP.</note>
+        </trans-unit>
+      </group>
+      <group datatype="x-DATA_ELEMENT" resname="ZADTP_TEMPLATE_DOCUMENT_ITEM">
+        <trans-unit id="DATA_ELEMENT:ZADTP_TEMPLATE_DOCUMENT_ITEM:SHORT_DESCRIPTION" maxwidth="60" size-unit="char">
+          <source>Template Document Item</source>
+          <note>Short description for Data Element ZADTP_TEMPLATE_DOCUMENT_ITEM.</note>
+        </trans-unit>
+        <trans-unit id="DATA_ELEMENT:ZADTP_TEMPLATE_DOCUMENT_ITEM:SHORT_FIELD_LABEL" maxwidth="10" size-unit="char">
+          <source>Item</source>
+          <note>Short field label for Data Element ZADTP_TEMPLATE_DOCUMENT_ITEM.</note>
+        </trans-unit>
+        <trans-unit id="DATA_ELEMENT:ZADTP_TEMPLATE_DOCUMENT_ITEM:MEDIUM_FIELD_LABEL" maxwidth="20" size-unit="char">
+          <source>Template Doc. Item</source>
+          <note>Medium field label for Data Element ZADTP_TEMPLATE_DOCUMENT_ITEM.</note>
+        </trans-unit>
+        <trans-unit id="DATA_ELEMENT:ZADTP_TEMPLATE_DOCUMENT_ITEM:LONG_FIELD_LABEL" maxwidth="40" size-unit="char">
+          <source>Template Document Item</source>
+          <note>Long field label for Data Element ZADTP_TEMPLATE_DOCUMENT_ITEM.</note>
+        </trans-unit>
+        <trans-unit id="DATA_ELEMENT:ZADTP_TEMPLATE_DOCUMENT_ITEM:HEADING_FIELD_LABEL" maxwidth="55" size-unit="char">
+          <source>Template Document Item</source>
+          <note>Heading field label for Data Element ZADTP_TEMPLATE_DOCUMENT_ITEM.</note>
+        </trans-unit>
+      </group>
+      <group datatype="x-DATA_ELEMENT" resname="ZADTP_TEMPLATE_DOCUMENT">
+        <trans-unit id="DATA_ELEMENT:ZADTP_TEMPLATE_DOCUMENT:SHORT_DESCRIPTION" maxwidth="60" size-unit="char">
+          <source>Template Document</source>
+          <note>Short description for Data Element ZADTP_TEMPLATE_DOCUMENT.</note>
+        </trans-unit>
+        <trans-unit id="DATA_ELEMENT:ZADTP_TEMPLATE_DOCUMENT:SHORT_FIELD_LABEL" maxwidth="10" size-unit="char">
+          <source>Tmpl. Doc.</source>
+          <note>Short field label for Data Element ZADTP_TEMPLATE_DOCUMENT.</note>
+        </trans-unit>
+        <trans-unit id="DATA_ELEMENT:ZADTP_TEMPLATE_DOCUMENT:MEDIUM_FIELD_LABEL" maxwidth="20" size-unit="char">
+          <source>Template Document</source>
+          <note>Medium field label for Data Element ZADTP_TEMPLATE_DOCUMENT.</note>
+        </trans-unit>
+        <trans-unit id="DATA_ELEMENT:ZADTP_TEMPLATE_DOCUMENT:LONG_FIELD_LABEL" maxwidth="40" size-unit="char">
+          <source>Template Document</source>
+          <note>Long field label for Data Element ZADTP_TEMPLATE_DOCUMENT.</note>
+        </trans-unit>
+        <trans-unit id="DATA_ELEMENT:ZADTP_TEMPLATE_DOCUMENT:HEADING_FIELD_LABEL" maxwidth="55" size-unit="char">
+          <source>Template Document</source>
+          <note>Heading field label for Data Element ZADTP_TEMPLATE_DOCUMENT.</note>
+        </trans-unit>
+      </group>
+      <group datatype="x-LTO_UIAD" resname="ZDMO_FLIGHT_ADT">
+        <trans-unit id="LTO_UIAD:ZDMO_FLIGHT_ADT:ALT_SMART_LINK_TITLE:RECORD:SUI_TM_MM_APPT:W1siQVBQX0lEIiwiWkRNT19GTElHSFRfQURUIl1d" maxwidth="255" size-unit="char">
+          <source/>
+          <note>The field ALT_SMART_LINK_TITLE is used as app title in launchpad app descriptor item</note>
+        </trans-unit>
+        <trans-unit id="LTO_UIAD:ZDMO_FLIGHT_ADT:DESCRIPTION:RECORD:SUI_TM_MM_APPT:W1siQVBQX0lEIiwiWkRNT19GTElHSFRfQURUIl1d" maxwidth="255" size-unit="char">
+          <source>ADT /DMO/FLIGHT</source>
+          <note>The field DESCRIPTION is used as description in launchpad app descriptor item</note>
+        </trans-unit>
+        <trans-unit id="LTO_UIAD:ZDMO_FLIGHT_ADT:TILE_TITLE:RECORD:SUI_TM_MM_APPATT:W1siQVBQX0lEIiwiWkRNT19GTElHSFRfQURUIl0sWyJUSUxFX0lEIiwiWkRNT19GTElHSFRfQURUX0FMIl1d" maxwidth="255" size-unit="char">
+          <source>/DMO/FLIGHT</source>
+          <note>The field TILE_TITLE is used as tile title in launchpad app descriptor item</note>
+        </trans-unit>
+        <trans-unit id="LTO_UIAD:ZDMO_FLIGHT_ADT:TILE_SUBTITLE:RECORD:SUI_TM_MM_APPATT:W1siQVBQX0lEIiwiWkRNT19GTElHSFRfQURUIl0sWyJUSUxFX0lEIiwiWkRNT19GTElHSFRfQURUX0FMIl1d" maxwidth="255" size-unit="char">
+          <source>ADT</source>
+          <note>The field TILE_SUBTITLE is used as tile subtitle in launchpad app descriptor item</note>
+        </trans-unit>
+        <trans-unit id="LTO_UIAD:ZDMO_FLIGHT_ADT:TILE_KEYWORDS:RECORD:SUI_TM_MM_APPATT:W1siQVBQX0lEIiwiWkRNT19GTElHSFRfQURUIl0sWyJUSUxFX0lEIiwiWkRNT19GTElHSFRfQURUX0FMIl1d" maxwidth="255" size-unit="char">
+          <source/>
+          <note>The field TILE_KEYWORDS is used as tile keywords in launchpad app descriptor item</note>
+        </trans-unit>
+        <trans-unit id="LTO_UIAD:ZDMO_FLIGHT_ADT:TILE_INFORMATION:RECORD:SUI_TM_MM_APPATT:W1siQVBQX0lEIiwiWkRNT19GTElHSFRfQURUIl0sWyJUSUxFX0lEIiwiWkRNT19GTElHSFRfQURUX0FMIl1d" maxwidth="255" size-unit="char">
+          <source/>
+          <note>The field TILE_INFORMATION is used as tile information in launchpad app descriptor item</note>
+        </trans-unit>
+      </group>
+      <group datatype="x-TEXT_POOL" resname="CL_ZCL_ADTPLUS_TRPR_TP">
+        <trans-unit id="TEXT_POOL:CL_ZCL_ADTPLUS_TRPR_TP:TEXT_ELEMENT_TEXT:TEXT_SYMBOL:001" maxwidth="20" size-unit="char">
+          <source>Customer saved</source>
+          <note>Text for text symbol 001 of class ZCL_ADTPLUS_TRPR_TP.</note>
+        </trans-unit>
+        <trans-unit id="TEXT_POOL:CL_ZCL_ADTPLUS_TRPR_TP:TEXT_ELEMENT_TEXT:TEXT_SYMBOL:002" maxwidth="30" size-unit="char">
+          <source>No order for this customer</source>
+          <note>Text for text symbol 002 of class ZCL_ADTPLUS_TRPR_TP.</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>

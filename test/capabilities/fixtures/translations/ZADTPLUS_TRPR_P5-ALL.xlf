@@ -1,0 +1,20 @@
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file datatype="plaintext" original="ZADTPLUS_TRPR_P5" source-language="en-US" target-language="de-DE">
+    <header>
+      <tool tool-company="SAP SE" tool-id="urn:x-sap:maintain-translations-fiori-app" tool-name="Maintain Translations Fiori App" tool-version="1.0.0"/>
+    </header>
+    <body>
+      <group datatype="x-MESSAGE_CLASS" resname="ZADTPLUS_TRPR_SUB">
+        <trans-unit id="MESSAGE_CLASS:ZADTPLUS_TRPR_SUB:SHORT_TEXT:001" maxwidth="73" size-unit="char">
+          <source>Order &amp; saved</source>
+          <target>Auftrag &amp; gesichert</target>
+          <note>Short description for message 001 of message class ZADTPLUS_TRPR_SUB.</note>
+        </trans-unit>
+        <trans-unit id="MESSAGE_CLASS:ZADTPLUS_TRPR_SUB:SHORT_TEXT:002" maxwidth="73" size-unit="char">
+          <source>Item &lt;&amp;1&gt; not found</source>
+          <note>Short description for message 002 of message class ZADTPLUS_TRPR_SUB.</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>

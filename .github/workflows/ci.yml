@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+# A newer push to a PR cancels its older run; each commit on main is its own group and keeps
+# its result (one group holds at most one waiting run, so a shared group would drop some).
+concurrency:
+  group: ci-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    # macOS too: some tests run on darwin only (Keychain, the VS Code extension paths).
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      # Mocked only: no SAP call.
+      - run: npm test
+      - run: npm run build
+

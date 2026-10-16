@@ -1,0 +1,546 @@
+{
+ "d": {
+  "results": [
+   {
+    "__metadata": {
+     "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/Project(ID='ZADTPLUS_TRPR_P2',Type='5')",
+     "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/Project(ID='ZADTPLUS_TRPR_P2',Type='5')",
+     "type": "cds_ui_smtr_project.ProjectType"
+    },
+    "addTextSources_ac": true,
+    "createProject_ac": true,
+    "createTranslation_ac": true,
+    "deleteProject_ac": true,
+    "deleteTextSource_ac": true,
+    "deleteTranslation_ac": true,
+    "updateProject_ac": true,
+    "ID": "ZADTPLUS_TRPR_P2",
+    "Type": "5",
+    "Name": "adt+ translation probe",
+    "Description": "Throwaway, adt+ probe",
+    "PackageName": "ZADTPLUS_TEST",
+    "to_TextSource": {
+     "results": [
+      {
+       "__metadata": {
+        "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='DATA_ELEM',Name='ZADTPLUS_RECIPE_RATING')",
+        "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='DATA_ELEM',Name='ZADTPLUS_RECIPE_RATING')",
+        "type": "cds_ui_smtr_project.TextSourceType"
+       },
+       "ProjectID": "ZADTPLUS_TRPR_P2",
+       "ProjectType": "5",
+       "Type": "DATA_ELEM",
+       "Name": "ZADTPLUS_RECIPE_RATING",
+       "to_Project": {
+        "__deferred": {
+         "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='DATA_ELEM',Name='ZADTPLUS_RECIPE_RATING')/to_Project"
+        }
+       }
+      },
+      {
+       "__metadata": {
+        "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='DOMAIN',Name='ZADTPLUS_RECIPE_RATING')",
+        "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='DOMAIN',Name='ZADTPLUS_RECIPE_RATING')",
+        "type": "cds_ui_smtr_project.TextSourceType"
+       },
+       "ProjectID": "ZADTPLUS_TRPR_P2",
+       "ProjectType": "5",
+       "Type": "DOMAIN",
+       "Name": "ZADTPLUS_RECIPE_RATING",
+       "to_Project": {
+        "__deferred": {
+         "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='DOMAIN',Name='ZADTPLUS_RECIPE_RATING')/to_Project"
+        }
+       }
+      },
+      {
+       "__metadata": {
+        "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='DATA_DEF',Name='ZC_ADTPLUS_RECIPE')",
+        "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='DATA_DEF',Name='ZC_ADTPLUS_RECIPE')",
+        "type": "cds_ui_smtr_project.TextSourceType"
+       },
+       "ProjectID": "ZADTPLUS_TRPR_P2",
+       "ProjectType": "5",
+       "Type": "DATA_DEF",
+       "Name": "ZC_ADTPLUS_RECIPE",
+       "to_Project": {
+        "__deferred": {
+         "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='DATA_DEF',Name='ZC_ADTPLUS_RECIPE')/to_Project"
+        }
+       }
+      },
+      {
+       "__metadata": {
+        "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='MTDT_XTNSN',Name='ZC_ADTPLUS_RECIPE')",
+        "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='MTDT_XTNSN',Name='ZC_ADTPLUS_RECIPE')",
+        "type": "cds_ui_smtr_project.TextSourceType"
+       },
+       "ProjectID": "ZADTPLUS_TRPR_P2",
+       "ProjectType": "5",
+       "Type": "MTDT_XTNSN",
+       "Name": "ZC_ADTPLUS_RECIPE",
+       "to_Project": {
+        "__deferred": {
+         "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='MTDT_XTNSN',Name='ZC_ADTPLUS_RECIPE')/to_Project"
+        }
+       }
+      },
+      {
+       "__metadata": {
+        "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='TEXT_POOL',Name='CL_ZCL_ADTPLUS_TEST_ADT_CLASSRUN')",
+        "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='TEXT_POOL',Name='CL_ZCL_ADTPLUS_TEST_ADT_CLASSRUN')",
+        "type": "cds_ui_smtr_project.TextSourceType"
+       },
+       "ProjectID": "ZADTPLUS_TRPR_P2",
+       "ProjectType": "5",
+       "Type": "TEXT_POOL",
+       "Name": "CL_ZCL_ADTPLUS_TEST_ADT_CLASSRUN",
+       "to_Project": {
+        "__deferred": {
+         "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='TEXT_POOL',Name='CL_ZCL_ADTPLUS_TEST_ADT_CLASSRUN')/to_Project"
+        }
+       }
+      },
+      {
+       "__metadata": {
+        "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='TEXT_POOL',Name='CL_ZCL_ADTPLUS_DEMO2')",
+        "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='TEXT_POOL',Name='CL_ZCL_ADTPLUS_DEMO2')",
+        "type": "cds_ui_smtr_project.TextSourceType"
+       },
+       "ProjectID": "ZADTPLUS_TRPR_P2",
+       "ProjectType": "5",
+       "Type": "TEXT_POOL",
+       "Name": "CL_ZCL_ADTPLUS_DEMO2",
+       "to_Project": {
+        "__deferred": {
+         "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='TEXT_POOL',Name='CL_ZCL_ADTPLUS_DEMO2')/to_Project"
+        }
+       }
+      },
+      {
+       "__metadata": {
+        "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='TEXT_POOL',Name='CL_ZCL_ADTPLUS_DEMO_LOCAL')",
+        "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='TEXT_POOL',Name='CL_ZCL_ADTPLUS_DEMO_LOCAL')",
+        "type": "cds_ui_smtr_project.TextSourceType"
+       },
+       "ProjectID": "ZADTPLUS_TRPR_P2",
+       "ProjectType": "5",
+       "Type": "TEXT_POOL",
+       "Name": "CL_ZCL_ADTPLUS_DEMO_LOCAL",
+       "to_Project": {
+        "__deferred": {
+         "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='TEXT_POOL',Name='CL_ZCL_ADTPLUS_DEMO_LOCAL')/to_Project"
+        }
+       }
+      },
+      {
+       "__metadata": {
+        "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='TEXT_POOL',Name='CL_ZBP_R_ADTPLUS_RAPOBJA')",
+        "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='TEXT_POOL',Name='CL_ZBP_R_ADTPLUS_RAPOBJA')",
+        "type": "cds_ui_smtr_project.TextSourceType"
+       },
+       "ProjectID": "ZADTPLUS_TRPR_P2",
+       "ProjectType": "5",
+       "Type": "TEXT_POOL",
+       "Name": "CL_ZBP_R_ADTPLUS_RAPOBJA",
+       "to_Project": {
+        "__deferred": {
+         "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='TEXT_POOL',Name='CL_ZBP_R_ADTPLUS_RAPOBJA')/to_Project"
+        }
+       }
+      },
+      {
+       "__metadata": {
+        "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='LTO_DRTY',Name='ZADTPLUS_RECIPE_RATING_CDS')",
+        "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='LTO_DRTY',Name='ZADTPLUS_RECIPE_RATING_CDS')",
+        "type": "cds_ui_smtr_project.TextSourceType"
+       },
+       "ProjectID": "ZADTPLUS_TRPR_P2",
+       "ProjectType": "5",
+       "Type": "LTO_DRTY",
+       "Name": "ZADTPLUS_RECIPE_RATING_CDS",
+       "to_Project": {
+        "__deferred": {
+         "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='LTO_DRTY',Name='ZADTPLUS_RECIPE_RATING_CDS')/to_Project"
+        }
+       }
+      },
+      {
+       "__metadata": {
+        "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='LTO_SAJC',Name='ZADTPLUS_JOB_TEST')",
+        "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='LTO_SAJC',Name='ZADTPLUS_JOB_TEST')",
+        "type": "cds_ui_smtr_project.TextSourceType"
+       },
+       "ProjectID": "ZADTPLUS_TRPR_P2",
+       "ProjectType": "5",
+       "Type": "LTO_SAJC",
+       "Name": "ZADTPLUS_JOB_TEST",
+       "to_Project": {
+        "__deferred": {
+         "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='LTO_SAJC',Name='ZADTPLUS_JOB_TEST')/to_Project"
+        }
+       }
+      },
+      {
+       "__metadata": {
+        "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='LTO_SAJT',Name='ZADTPLUS_JOB_TEST')",
+        "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='LTO_SAJT',Name='ZADTPLUS_JOB_TEST')",
+        "type": "cds_ui_smtr_project.TextSourceType"
+       },
+       "ProjectID": "ZADTPLUS_TRPR_P2",
+       "ProjectType": "5",
+       "Type": "LTO_SAJT",
+       "Name": "ZADTPLUS_JOB_TEST",
+       "to_Project": {
+        "__deferred": {
+         "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='LTO_SAJT',Name='ZADTPLUS_JOB_TEST')/to_Project"
+        }
+       }
+      },
+      {
+       "__metadata": {
+        "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='IAM_BU_CA',Name='ZADTPLUS_JOB_TEST')",
+        "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='IAM_BU_CA',Name='ZADTPLUS_JOB_TEST')",
+        "type": "cds_ui_smtr_project.TextSourceType"
+       },
+       "ProjectID": "ZADTPLUS_TRPR_P2",
+       "ProjectType": "5",
+       "Type": "IAM_BU_CA",
+       "Name": "ZADTPLUS_JOB_TEST",
+       "to_Project": {
+        "__deferred": {
+         "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='IAM_BU_CA',Name='ZADTPLUS_JOB_TEST')/to_Project"
+        }
+       }
+      },
+      {
+       "__metadata": {
+        "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='BNS_CNFG_O',Name='ZADTPLUS_CURR')",
+        "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='BNS_CNFG_O',Name='ZADTPLUS_CURR')",
+        "type": "cds_ui_smtr_project.TextSourceType"
+       },
+       "ProjectID": "ZADTPLUS_TRPR_P2",
+       "ProjectType": "5",
+       "Type": "BNS_CNFG_O",
+       "Name": "ZADTPLUS_CURR",
+       "to_Project": {
+        "__deferred": {
+         "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='BNS_CNFG_O',Name='ZADTPLUS_CURR')/to_Project"
+        }
+       }
+      },
+      {
+       "__metadata": {
+        "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='PACKAGE',Name='ZADTP_TEMPLATE_DOCUMENT')",
+        "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='PACKAGE',Name='ZADTP_TEMPLATE_DOCUMENT')",
+        "type": "cds_ui_smtr_project.TextSourceType"
+       },
+       "ProjectID": "ZADTPLUS_TRPR_P2",
+       "ProjectType": "5",
+       "Type": "PACKAGE",
+       "Name": "ZADTP_TEMPLATE_DOCUMENT",
+       "to_Project": {
+        "__deferred": {
+         "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='PACKAGE',Name='ZADTP_TEMPLATE_DOCUMENT')/to_Project"
+        }
+       }
+      },
+      {
+       "__metadata": {
+        "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='LTO_UIAD',Name='ZDMO_FLIGHT_ADT')",
+        "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='LTO_UIAD',Name='ZDMO_FLIGHT_ADT')",
+        "type": "cds_ui_smtr_project.TextSourceType"
+       },
+       "ProjectID": "ZADTPLUS_TRPR_P2",
+       "ProjectType": "5",
+       "Type": "LTO_UIAD",
+       "Name": "ZDMO_FLIGHT_ADT",
+       "to_Project": {
+        "__deferred": {
+         "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='LTO_UIAD',Name='ZDMO_FLIGHT_ADT')/to_Project"
+        }
+       }
+      },
+      {
+       "__metadata": {
+        "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='TEXT_POOL',Name='CL_ZCL_ADTPLUS_TRPR_TP')",
+        "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='TEXT_POOL',Name='CL_ZCL_ADTPLUS_TRPR_TP')",
+        "type": "cds_ui_smtr_project.TextSourceType"
+       },
+       "ProjectID": "ZADTPLUS_TRPR_P2",
+       "ProjectType": "5",
+       "Type": "TEXT_POOL",
+       "Name": "CL_ZCL_ADTPLUS_TRPR_TP",
+       "to_Project": {
+        "__deferred": {
+         "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',Type='TEXT_POOL',Name='CL_ZCL_ADTPLUS_TRPR_TP')/to_Project"
+        }
+       }
+      }
+     ]
+    },
+    "to_Translation": {
+     "results": [
+      {
+       "__metadata": {
+        "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/Translation(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',SourceLanguage='EN',TargetLanguage='DE')",
+        "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/Translation(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',SourceLanguage='EN',TargetLanguage='DE')",
+        "type": "cds_ui_smtr_project.TranslationType"
+       },
+       "publishTranslation_ac": true,
+       "uploadTranslationFile_ac": true,
+       "ProjectID": "ZADTPLUS_TRPR_P2",
+       "ProjectType": "5",
+       "SourceLanguage": "EN",
+       "TargetLanguage": "DE",
+       "PublishStatus": "INITIAL",
+       "PublishStatusDescription": "Initial",
+       "LastPublishedAt": null,
+       "LastPublishedBy": "",
+       "LastUploadedAt": null,
+       "LastUploadedBy": "",
+       "to_Project": {
+        "__deferred": {
+         "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/Translation(ProjectID='ZADTPLUS_TRPR_P2',ProjectType='5',SourceLanguage='EN',TargetLanguage='DE')/to_Project"
+        }
+       }
+      }
+     ]
+    }
+   },
+   {
+    "__metadata": {
+     "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/Project(ID='ZADTPLUS_TRPR_P3',Type='5')",
+     "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/Project(ID='ZADTPLUS_TRPR_P3',Type='5')",
+     "type": "cds_ui_smtr_project.ProjectType"
+    },
+    "addTextSources_ac": true,
+    "createProject_ac": true,
+    "createTranslation_ac": true,
+    "deleteProject_ac": true,
+    "deleteTextSource_ac": true,
+    "deleteTranslation_ac": true,
+    "updateProject_ac": true,
+    "ID": "ZADTPLUS_TRPR_P3",
+    "Type": "5",
+    "Name": "adt+ translation probe",
+    "Description": "Throwaway, adt+ probe",
+    "PackageName": "ZADTPLUS_TEST",
+    "to_TextSource": {
+     "results": [
+      {
+       "__metadata": {
+        "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P3',ProjectType='5',Type='TEXT_POOL',Name='CL_ZBP_R_ADTPLUS_RAPOBJA')",
+        "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P3',ProjectType='5',Type='TEXT_POOL',Name='CL_ZBP_R_ADTPLUS_RAPOBJA')",
+        "type": "cds_ui_smtr_project.TextSourceType"
+       },
+       "ProjectID": "ZADTPLUS_TRPR_P3",
+       "ProjectType": "5",
+       "Type": "TEXT_POOL",
+       "Name": "CL_ZBP_R_ADTPLUS_RAPOBJA",
+       "to_Project": {
+        "__deferred": {
+         "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P3',ProjectType='5',Type='TEXT_POOL',Name='CL_ZBP_R_ADTPLUS_RAPOBJA')/to_Project"
+        }
+       }
+      },
+      {
+       "__metadata": {
+        "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P3',ProjectType='5',Type='TEXT_POOL',Name='CL_ZCL_ADTPLUS_SO_DATA')",
+        "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P3',ProjectType='5',Type='TEXT_POOL',Name='CL_ZCL_ADTPLUS_SO_DATA')",
+        "type": "cds_ui_smtr_project.TextSourceType"
+       },
+       "ProjectID": "ZADTPLUS_TRPR_P3",
+       "ProjectType": "5",
+       "Type": "TEXT_POOL",
+       "Name": "CL_ZCL_ADTPLUS_SO_DATA",
+       "to_Project": {
+        "__deferred": {
+         "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P3',ProjectType='5',Type='TEXT_POOL',Name='CL_ZCL_ADTPLUS_SO_DATA')/to_Project"
+        }
+       }
+      },
+      {
+       "__metadata": {
+        "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P3',ProjectType='5',Type='TEXT_POOL',Name='CL_ZCL_ADTPLUS_TEST_ADT_CLASSRUN')",
+        "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P3',ProjectType='5',Type='TEXT_POOL',Name='CL_ZCL_ADTPLUS_TEST_ADT_CLASSRUN')",
+        "type": "cds_ui_smtr_project.TextSourceType"
+       },
+       "ProjectID": "ZADTPLUS_TRPR_P3",
+       "ProjectType": "5",
+       "Type": "TEXT_POOL",
+       "Name": "CL_ZCL_ADTPLUS_TEST_ADT_CLASSRUN",
+       "to_Project": {
+        "__deferred": {
+         "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P3',ProjectType='5',Type='TEXT_POOL',Name='CL_ZCL_ADTPLUS_TEST_ADT_CLASSRUN')/to_Project"
+        }
+       }
+      }
+     ]
+    },
+    "to_Translation": {
+     "results": [
+      {
+       "__metadata": {
+        "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/Translation(ProjectID='ZADTPLUS_TRPR_P3',ProjectType='5',SourceLanguage='EN',TargetLanguage='DE')",
+        "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/Translation(ProjectID='ZADTPLUS_TRPR_P3',ProjectType='5',SourceLanguage='EN',TargetLanguage='DE')",
+        "type": "cds_ui_smtr_project.TranslationType"
+       },
+       "publishTranslation_ac": true,
+       "uploadTranslationFile_ac": true,
+       "ProjectID": "ZADTPLUS_TRPR_P3",
+       "ProjectType": "5",
+       "SourceLanguage": "EN",
+       "TargetLanguage": "DE",
+       "PublishStatus": "INITIAL",
+       "PublishStatusDescription": "Initial",
+       "LastPublishedAt": null,
+       "LastPublishedBy": "",
+       "LastUploadedAt": null,
+       "LastUploadedBy": "",
+       "to_Project": {
+        "__deferred": {
+         "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/Translation(ProjectID='ZADTPLUS_TRPR_P3',ProjectType='5',SourceLanguage='EN',TargetLanguage='DE')/to_Project"
+        }
+       }
+      }
+     ]
+    }
+   },
+   {
+    "__metadata": {
+     "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/Project(ID='ZADTPLUS_TRPR_P4',Type='5')",
+     "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/Project(ID='ZADTPLUS_TRPR_P4',Type='5')",
+     "type": "cds_ui_smtr_project.ProjectType"
+    },
+    "addTextSources_ac": true,
+    "createProject_ac": true,
+    "createTranslation_ac": true,
+    "deleteProject_ac": true,
+    "deleteTextSource_ac": true,
+    "deleteTranslation_ac": true,
+    "updateProject_ac": true,
+    "ID": "ZADTPLUS_TRPR_P4",
+    "Type": "5",
+    "Name": "adt+ translation probe",
+    "Description": "Throwaway, adt+ probe",
+    "PackageName": "ZADTPLUS_ADT_DIFF_SUB",
+    "to_TextSource": {
+     "results": [
+      {
+       "__metadata": {
+        "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P4',ProjectType='5',Type='MESSAGE_CL',Name='ZADTPLUS_TRPR_SUB')",
+        "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P4',ProjectType='5',Type='MESSAGE_CL',Name='ZADTPLUS_TRPR_SUB')",
+        "type": "cds_ui_smtr_project.TextSourceType"
+       },
+       "ProjectID": "ZADTPLUS_TRPR_P4",
+       "ProjectType": "5",
+       "Type": "MESSAGE_CL",
+       "Name": "ZADTPLUS_TRPR_SUB",
+       "to_Project": {
+        "__deferred": {
+         "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P4',ProjectType='5',Type='MESSAGE_CL',Name='ZADTPLUS_TRPR_SUB')/to_Project"
+        }
+       }
+      }
+     ]
+    },
+    "to_Translation": {
+     "results": [
+      {
+       "__metadata": {
+        "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/Translation(ProjectID='ZADTPLUS_TRPR_P4',ProjectType='5',SourceLanguage='EN',TargetLanguage='DE')",
+        "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/Translation(ProjectID='ZADTPLUS_TRPR_P4',ProjectType='5',SourceLanguage='EN',TargetLanguage='DE')",
+        "type": "cds_ui_smtr_project.TranslationType"
+       },
+       "publishTranslation_ac": true,
+       "uploadTranslationFile_ac": true,
+       "ProjectID": "ZADTPLUS_TRPR_P4",
+       "ProjectType": "5",
+       "SourceLanguage": "EN",
+       "TargetLanguage": "DE",
+       "PublishStatus": "INITIAL",
+       "PublishStatusDescription": "Initial",
+       "LastPublishedAt": null,
+       "LastPublishedBy": "",
+       "LastUploadedAt": null,
+       "LastUploadedBy": "",
+       "to_Project": {
+        "__deferred": {
+         "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/Translation(ProjectID='ZADTPLUS_TRPR_P4',ProjectType='5',SourceLanguage='EN',TargetLanguage='DE')/to_Project"
+        }
+       }
+      }
+     ]
+    }
+   },
+   {
+    "__metadata": {
+     "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/Project(ID='ZADTPLUS_TRPR_P5',Type='5')",
+     "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/Project(ID='ZADTPLUS_TRPR_P5',Type='5')",
+     "type": "cds_ui_smtr_project.ProjectType"
+    },
+    "addTextSources_ac": true,
+    "createProject_ac": true,
+    "createTranslation_ac": true,
+    "deleteProject_ac": true,
+    "deleteTextSource_ac": true,
+    "deleteTranslation_ac": true,
+    "updateProject_ac": true,
+    "ID": "ZADTPLUS_TRPR_P5",
+    "Type": "5",
+    "Name": "adt+ translation probe",
+    "Description": "Throwaway, adt+ probe",
+    "PackageName": "ZADTPLUS_ADT_DIFF_SUB",
+    "to_TextSource": {
+     "results": [
+      {
+       "__metadata": {
+        "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P5',ProjectType='5',Type='PACKAGE',Name='ZADTPLUS_ADT_DIFF_SUB')",
+        "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P5',ProjectType='5',Type='PACKAGE',Name='ZADTPLUS_ADT_DIFF_SUB')",
+        "type": "cds_ui_smtr_project.TextSourceType"
+       },
+       "ProjectID": "ZADTPLUS_TRPR_P5",
+       "ProjectType": "5",
+       "Type": "PACKAGE",
+       "Name": "ZADTPLUS_ADT_DIFF_SUB",
+       "to_Project": {
+        "__deferred": {
+         "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/TextSource(ProjectID='ZADTPLUS_TRPR_P5',ProjectType='5',Type='PACKAGE',Name='ZADTPLUS_ADT_DIFF_SUB')/to_Project"
+        }
+       }
+      }
+     ]
+    },
+    "to_Translation": {
+     "results": [
+      {
+       "__metadata": {
+        "id": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/Translation(ProjectID='ZADTPLUS_TRPR_P5',ProjectType='5',SourceLanguage='EN',TargetLanguage='DE')",
+        "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/Translation(ProjectID='ZADTPLUS_TRPR_P5',ProjectType='5',SourceLanguage='EN',TargetLanguage='DE')",
+        "type": "cds_ui_smtr_project.TranslationType"
+       },
+       "publishTranslation_ac": true,
+       "uploadTranslationFile_ac": true,
+       "ProjectID": "ZADTPLUS_TRPR_P5",
+       "ProjectType": "5",
+       "SourceLanguage": "EN",
+       "TargetLanguage": "DE",
+       "PublishStatus": "SUCCESS",
+       "PublishStatusDescription": "Published",
+       "LastPublishedAt": "/Date(1791892008575+0000)/",
+       "LastPublishedBy": "Jane Doe",
+       "LastUploadedAt": "/Date(1791892008178+0000)/",
+       "LastUploadedBy": "Jane Doe",
+       "to_Project": {
+        "__deferred": {
+         "uri": "https://cloud-erp.invalid/sap/opu/odata/sap/UI_SMTR_PROJECT/Translation(ProjectID='ZADTPLUS_TRPR_P5',ProjectType='5',SourceLanguage='EN',TargetLanguage='DE')/to_Project"
+        }
+       }
+      }
+     ]
+    }
+   }
+  ]
+ }
+}

@@ -1,0 +1,14 @@
+node_modules/
+dist/
+*.log
+.env*
+
+# Claude Code: per-session worktrees and local settings
+.claude/worktrees/
+.claude/settings.local.json
+
+# raw probe output, session notes (AGENTS.md, "Public repository")
+scratch/
+# public-safety gate denylist (dev/gate.sh); names what it guards
+.denylist
+coverage/

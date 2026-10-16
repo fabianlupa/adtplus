@@ -1,0 +1,2 @@
+#!/bin/sh
+exec dev/gate.sh --message "$1"

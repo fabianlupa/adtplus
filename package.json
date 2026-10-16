@@ -1,0 +1,62 @@
+{
+  "name": "adtplus",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "ABAP development from your AI assistant, terminal and git: MCP server, CLI and git remote over adt-ls.",
+  "engines": {
+    "node": ">=22.15"
+  },
+  "bin": {
+    "adtplus": "dist/cli/index.js",
+    "git-remote-adtplus": "dist/git/main.js"
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint",
+    "cli": "tsx src/cli/index.ts",
+    "mcp": "tsx src/mcp/server.ts",
+    "smoke": "npm run build && tsx test/live/smoke.ts",
+    "gate": "dev/gate.sh",
+    "coverage": "vitest run --coverage --coverage.include=src/**"
+  },
+  "dependencies": {
+    "@abaplint/core": "2.120.54",
+    "@arc-mcp/adt-ls": "0.7.0",
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "ajv": "8.20.0",
+    "zod": "3.25.76"
+  },
+  "devDependencies": {
+    "@eslint-community/eslint-plugin-eslint-comments": "^4",
+    "@types/node": "^22",
+    "@vitest/coverage-v8": "^5.0.1",
+    "eslint": "^10",
+    "tsup": "^8",
+    "tsx": "^4",
+    "typescript": "^5",
+    "typescript-eslint": "^8",
+    "vitest": "^5"
+  },
+  "license": "Apache-2.0",
+  "author": "Fabian Lupa",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fabianlupa/adtplus.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fabianlupa/adtplus/issues"
+  },
+  "homepage": "https://github.com/fabianlupa/adtplus#readme",
+  "keywords": [
+    "abap",
+    "sap",
+    "adt",
+    "mcp",
+    "model-context-protocol",
+    "copilot",
+    "s4hana"
+  ]
+}
