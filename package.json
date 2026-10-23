@@ -23,7 +23,7 @@
     "coverage": "vitest run --coverage --coverage.include=src/**"
   },
   "dependencies": {
-    "@abaplint/core": "2.120.77",
+    "@abaplint/core": "2.120.83",
     "@arc-mcp/adt-ls": "0.7.0",
     "@modelcontextprotocol/sdk": "1.32.1",
     "ajv": "8.20.0",
